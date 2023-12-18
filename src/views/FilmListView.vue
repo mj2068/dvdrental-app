@@ -41,9 +41,9 @@ interface QueryResultFilm {
 const current = ref(1);
 const pageSize = ref(10);
 const currentSorter = ref<SorterResult<FilmRecord>>({
-  columnKey: 'length',
-  field: 'length',
-  order: 'descend',
+  columnKey: 'film_id',
+  field: 'film_id',
+  order: 'ascend',
 });
 
 const columns = computed<TableColumnType<FilmRecord>[]>(() =>
@@ -210,16 +210,14 @@ const sortColumn = ref('');
     :pagination="pagination"
     @change="onTableChange"
   >
-    <template #bodyCell="{ column, index, record, value, text }">
+    <template #bodyCell="{ column, record, value }">
       <template v-if="column.key === 'action'">
         <span>
           <a>delete</a>
         </span>
       </template>
       <template v-else-if="column.key === 'title'">
-        <router-link :to="`film/${record.film_id}`">{{
-          record.title
-        }}</router-link>
+        <router-link :to="`/film/${record.film_id}`">{{ value }}</router-link>
       </template>
     </template>
   </a-table>

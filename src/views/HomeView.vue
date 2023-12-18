@@ -1,6 +1,7 @@
 <template>
   <div>
-    <router-link to="film">film</router-link>
+    <router-link to="/film">film</router-link>&nbsp;
+    <router-link to="/actor">actor</router-link>
   </div>
 </template>
 
