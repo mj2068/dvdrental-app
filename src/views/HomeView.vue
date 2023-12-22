@@ -1,8 +1,5 @@
 <template>
-  <div>
-    <router-link to="/film">film</router-link>&nbsp;
-    <router-link to="/actor">actor</router-link>
-  </div>
+  <h1>dvdrental</h1>
 </template>
 
 <script setup lang="ts"></script>
