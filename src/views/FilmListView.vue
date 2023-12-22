@@ -2,12 +2,14 @@
 import { computed, ref, onMounted } from 'vue';
 import axios from 'axios';
 import { usePagination } from 'vue-request';
+import { useRoute } from 'vue-router';
 
 import type {
   TableColumnType,
   TablePaginationConfig,
   TableProps,
 } from 'ant-design-vue';
+
 import type {
   SorterResult,
   SortOrder,
@@ -19,7 +21,7 @@ interface QueryParams {
   limit?: number;
 }
 
-interface FilmRecord {
+export interface FilmRecord {
   film_id: number;
   title: string;
   description?: string;
@@ -29,9 +31,56 @@ interface FilmRecord {
   replacement_cost: number;
   length: number;
   language_id: number;
+  rating: MPAARating;
+  special_features: string[];
+  last_update: Date;
+  fulltext: string;
+  language: LanguageRecord;
+  categories: CategoryRecord[];
+}
+
+type MPAARating = 'G' | 'PG' | 'PG-13' | 'R' | 'NC-17';
+
+type Language =
+  | 'English'
+  | 'Italian'
+  | 'Japanese'
+  | 'Mandarin'
+  | 'French'
+  | 'German';
+
+interface LanguageRecord {
+  language_id: number;
+  name: Language;
+  last_update: Date;
+}
+
+type Category =
+  | 'Action'
+  | 'Animation'
+  | 'Children'
+  | 'Classics'
+  | 'Comedy'
+  | 'Documentary'
+  | 'Drama'
+  | 'Family'
+  | 'Foreign'
+  | 'Games'
+  | 'Horror'
+  | 'Music'
+  | 'New'
+  | 'Sci-Fi'
+  | 'Sports'
+  | 'Travel';
+
+interface CategoryRecord {
+  category_id: number;
+  name: Category;
+  last_update: Date;
 }
 
 interface QueryResultFilm {
+  gross: number;
   total: number;
   limit: number;
   offset: number;
@@ -40,11 +89,7 @@ interface QueryResultFilm {
 
 const current = ref(1);
 const pageSize = ref(10);
-const currentSorter = ref<SorterResult<FilmRecord>>({
-  columnKey: 'film_id',
-  field: 'film_id',
-  order: 'ascend',
-});
+const currentSorter = ref<SorterResult<FilmRecord>>({});
 
 const columns = computed<TableColumnType<FilmRecord>[]>(() =>
   [
@@ -121,6 +166,8 @@ const columns = computed<TableColumnType<FilmRecord>[]>(() =>
     })
 );
 
+const route = useRoute();
+
 onMounted(() => runWithCurrent());
 
 async function queryData(params?: QueryParams) {
@@ -144,7 +191,7 @@ const pagination = computed<TablePaginationConfig>(() => ({
   current: current.value,
   pageSize: pageSize.value,
   showTotal: (total: number, range: number[]) =>
-    `${range[0]}-${range[1]} of ${total} items`,
+    `共 ${total} 条中的第 ${range[0]}-${range[1]} 条`,
   showSizeChanger: true,
   showQuickJumper: true,
 }));
@@ -162,6 +209,10 @@ function runWithCurrent() {
       ['ascend', 1],
       ['descend', 2],
     ]).get(currentSorter.value.order);
+  }
+
+  if (route.query.actor_id) {
+    params.actor_id = route.query.actor_id;
   }
 
   run(params);

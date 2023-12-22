@@ -2,10 +2,6 @@
 import { useRoute } from 'vue-router';
 
 const route = useRoute();
-console.log(route.params.id);
 </script>
 
-<template>
-  actress/actor detail page
-  <router-link to="/actor">actor</router-link>
-</template>
+<template><a-descriptions :title="'hello'"></a-descriptions></template>
