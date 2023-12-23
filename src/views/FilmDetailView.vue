@@ -1,20 +1,14 @@
 <script setup lang="ts">
 import axios from 'axios';
 import { useRequest } from 'vue-request';
-import { useRouter } from 'vue-router';
+import type { ActorRecord } from './ActorListView.vue';
 import type { FilmRecord } from './FilmListView.vue';
+import { UserOutlined } from '@ant-design/icons-vue';
 
 /** ************ types ************ */
-export interface ActorRecord {
-  actor_id: number;
-  first_name: string;
-  last_name: string;
-  last_update: Date;
-}
-
 interface QueryFilmDetailParams {}
 
-interface FilmDetailRecord extends FilmRecord {
+export interface FilmDetailRecord extends FilmRecord {
   cast: ActorRecord[];
 }
 
@@ -26,8 +20,6 @@ interface QueryResultFilmDetail {
 const props = defineProps<{
   id: string;
 }>();
-
-const router = useRouter();
 
 async function getFilmDetail(params: QueryFilmDetailParams) {
   const result = await axios.get<QueryResultFilmDetail>(
@@ -77,11 +69,11 @@ const { data } = useRequest(getFilmDetail);
       :content-style="{ display: 'block' }"
     >
       <p v-for="member in data?.result.cast" :key="member.actor_id">
-        <a
-          @click="
-            router.push({ name: 'film', query: { actor_id: member.actor_id } })
-          "
-          >{{ member.first_name }} {{ member.last_name }}</a
+        <router-link :to="`/actor/${member.actor_id}`">
+          <a-avatar style="margin-right: 8px" size="small">
+            <template v-slot:icon><user-outlined /></template>
+          </a-avatar>
+          {{ member.full_name }}</router-link
         >
       </p>
     </a-descriptions-item>

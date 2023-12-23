@@ -37,6 +37,7 @@ export interface FilmRecord {
   fulltext: string;
   language: LanguageRecord;
   categories: CategoryRecord[];
+  cast_count: number;
 }
 
 type MPAARating = 'G' | 'PG' | 'PG-13' | 'R' | 'NC-17';
@@ -119,10 +120,26 @@ const columns = computed<TableColumnType<FilmRecord>[]>(() =>
       title: 'Release Year',
     },
     {
+      key: 'category',
+      dataIndex: 'category',
+      title: 'Category',
+    },
+    {
+      key: 'rating',
+      dataIndex: 'rating',
+      title: 'Rating',
+      sorter: true,
+    },
+    {
       key: 'length',
       dataIndex: 'length',
       title: 'Length',
       sorter: true,
+    },
+    {
+      key: 'cast_count',
+      dataIndex: 'cast_count',
+      title: 'Cast Count',
     },
     {
       key: 'rental_rate',
@@ -134,6 +151,7 @@ const columns = computed<TableColumnType<FilmRecord>[]>(() =>
       key: 'rental_duration',
       dataIndex: 'rental_duration',
       title: 'Rental Duration',
+      sorter: true,
     },
     {
       key: 'replacement_cost',
@@ -172,7 +190,7 @@ onMounted(() => runWithCurrent());
 
 async function queryData(params?: QueryParams) {
   const result = await axios.get<QueryResultFilm>(
-    'http://localhost:8000/film',
+    'http://localhost:8000/film/',
     { params }
   );
   return result.data;
@@ -191,7 +209,7 @@ const pagination = computed<TablePaginationConfig>(() => ({
   current: current.value,
   pageSize: pageSize.value,
   showTotal: (total: number, range: number[]) =>
-    `共 ${total} 条中的第 ${range[0]}-${range[1]} 条`,
+    `第 ${range[0]}-${range[1]} 条（共 ${total} 条）`,
   showSizeChanger: true,
   showQuickJumper: true,
 }));
@@ -215,12 +233,19 @@ function runWithCurrent() {
     params.actor_id = route.query.actor_id;
   }
 
+  filterLengthMin.value && (params.lengthMin = filterLengthMin.value);
+  filterLengthMax.value && (params.lengthMax = filterLengthMax.value);
+
+  filterRating.value && (params.rating = filterRating.value);
+
+  filterSearchTitle.value && (params.searchTitle = filterSearchTitle.value);
+
   run(params);
 }
 
 const onTableChange: TableProps<FilmRecord>['onChange'] = function (
   pagination: { pageSize?: number; current?: number },
-  filters,
+  _filters,
   sorter
 ) {
   // console.log(pagination);
@@ -242,6 +267,20 @@ function sort(order: SortOrder) {
 }
 
 const sortColumn = ref('');
+
+const filterLengthMin = ref();
+const filterLengthMax = ref();
+
+const mpaaRatingOptions: { value: MPAARating | ''; text: string }[] = [
+  { value: 'G', text: 'G' },
+  { value: 'PG', text: 'PG' },
+  { value: 'PG-13', text: 'PG-13' },
+  { value: 'R', text: 'R' },
+  { value: 'NC-17', text: 'NC-17' },
+];
+const filterRating = ref<MPAARating | ''>();
+
+const filterSearchTitle = ref<string>();
 </script>
 
 <template>
@@ -253,6 +292,58 @@ const sortColumn = ref('');
     >descend</AButton
   >
   <a-button @click="console.log(sortColumn)">check</a-button>
+
+  <a-divider></a-divider>
+
+  <div style="display: flex; justify-content: center">
+    <a-row :gutter="[24, 24]" style="width: 80%">
+      <a-col :span="8">
+        <span style="font-weight: bold; width: 20%">Length: </span>
+        <div style="width: 75%; display: inline-block">
+          <a-input-group compact style="">
+            <a-input
+              v-model:value="filterLengthMin"
+              style="width: 40%"
+            ></a-input>
+            <a-input
+              placeholder="~"
+              disabled
+              style="pointer-events: none; text-align: center; width: 40px"
+            ></a-input>
+            <a-input
+              v-model:value="filterLengthMax"
+              style="width: 40%"
+            ></a-input>
+          </a-input-group>
+        </div>
+      </a-col>
+
+      <a-col :span="8">
+        <span style="font-weight: bold; width: 20%">Rating: </span>
+        <a-select v-model:value="filterRating" style="width: 75%" allow-clear>
+          <ASelectOption
+            v-for="o in mpaaRatingOptions"
+            :value="o.value"
+            :key="o.value"
+            >{{ o.text }}
+          </ASelectOption>
+        </a-select>
+      </a-col>
+      <a-col :span="8">
+        <span style="width: 20%; font-weight: bold">Search Title: </span>
+        <div style="width: 75%; display: inline-block">
+          <a-input v-model:value="filterSearchTitle"></a-input>
+        </div>
+      </a-col>
+    </a-row>
+  </div>
+  <div style="display: flex; justify-content: center">
+    <a-row style="width: 80%; margin-top: 16px">
+      <a-button @click="runWithCurrent">refresh</a-button>
+    </a-row>
+  </div>
+  <a-divider></a-divider>
+
   <a-table
     :columns="columns"
     row-key="film_id"

@@ -5,11 +5,13 @@ import axios from 'axios';
 import { computed } from 'vue';
 import { usePagination } from 'vue-request';
 
-interface ActorRecord {
+export interface ActorRecord {
   actor_id: number;
   first_name: string;
   last_name: string;
-  last_update: string;
+  last_update: Date;
+  full_name: string;
+  film_count: number;
 }
 
 interface ActorQueryParams {

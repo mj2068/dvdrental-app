@@ -30,7 +30,7 @@ const router = createRouter({
       component: ActorListView,
     },
     {
-      path: '/actor/:id',
+      path: '/actor/:actorId(\\d+)',
       name: 'actorDetail',
       component: ActorDetailView,
     },
