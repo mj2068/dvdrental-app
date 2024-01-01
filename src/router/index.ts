@@ -4,6 +4,7 @@ import HomeView from '../views/HomeView.vue';
 import FilmDetailView from '../views/FilmDetailView.vue';
 import ActorListView from '../views/ActorListView.vue';
 import ActorDetailView from '../views/ActorDetailView.vue';
+import RentalListView from '@/views/RentalListView.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -33,6 +34,11 @@ const router = createRouter({
       path: '/actor/:actorId(\\d+)',
       name: 'actorDetail',
       component: ActorDetailView,
+    },
+    {
+      path: '/rental',
+      name: 'rental',
+      component: RentalListView,
     },
   ],
 });
