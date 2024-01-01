@@ -120,11 +120,6 @@ const columns = computed<TableColumnType<FilmRecord>[]>(() =>
       title: 'Release Year',
     },
     {
-      key: 'category',
-      dataIndex: 'category',
-      title: 'Category',
-    },
-    {
       key: 'rating',
       dataIndex: 'rating',
       title: 'Rating',
@@ -298,9 +293,10 @@ const filterSearchTitle = ref<string>();
   <div style="display: flex; justify-content: center">
     <a-row :gutter="[24, 24]" style="width: 80%">
       <a-col :span="8">
-        <span style="font-weight: bold; width: 20%">Length: </span>
-        <div style="width: 75%; display: inline-block">
-          <a-input-group compact style="">
+        <span class="filter-input-label">Length: </span>
+        <!-- vertical-align: middle somehow made the last span vertically align -->
+        <div style="width: 75%; display: inline-block; vertical-align: middle">
+          <a-input-group compact>
             <a-input
               v-model:value="filterLengthMin"
               style="width: 40%"
@@ -319,8 +315,8 @@ const filterSearchTitle = ref<string>();
       </a-col>
 
       <a-col :span="8">
-        <span style="font-weight: bold; width: 20%">Rating: </span>
-        <a-select v-model:value="filterRating" style="width: 75%" allow-clear>
+        <span class="filter-input-label">Rating: </span>
+        <a-select v-model:value="filterRating" style="width: 70%" allow-clear>
           <ASelectOption
             v-for="o in mpaaRatingOptions"
             :value="o.value"
@@ -329,11 +325,10 @@ const filterSearchTitle = ref<string>();
           </ASelectOption>
         </a-select>
       </a-col>
+
       <a-col :span="8">
-        <span style="width: 20%; font-weight: bold">Search Title: </span>
-        <div style="width: 75%; display: inline-block">
-          <a-input v-model:value="filterSearchTitle"></a-input>
-        </div>
+        <span class="filter-input-label">Search Title: </span>
+        <a-input v-model:value="filterSearchTitle" style="width: 70%"></a-input>
       </a-col>
     </a-row>
   </div>
@@ -364,3 +359,9 @@ const filterSearchTitle = ref<string>();
     </template>
   </a-table>
 </template>
+
+<style>
+span.filter-input-label {
+  font-weight: bold;
+}
+</style>

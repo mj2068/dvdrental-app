@@ -12,17 +12,13 @@ export interface FilmDetailRecord extends FilmRecord {
   cast: ActorRecord[];
 }
 
-interface QueryResultFilmDetail {
-  result: FilmDetailRecord;
-}
-
 // props from route(props: true)
 const props = defineProps<{
   id: string;
 }>();
 
 async function getFilmDetail(params: QueryFilmDetailParams) {
-  const result = await axios.get<QueryResultFilmDetail>(
+  const result = await axios.get<FilmDetailRecord>(
     `http://localhost:8000/film/${props.id}`,
     { params }
   );
@@ -32,43 +28,39 @@ const { data } = useRequest(getFilmDetail);
 </script>
 
 <template>
-  <a-descriptions :title="data?.result.title" :bordered="true" :column="2">
+  <a-descriptions :title="data?.title" :bordered="true" :column="2">
     <a-descriptions-item label="Descriptsion" :span="2">{{
-      data?.result.description
+      data?.description
     }}</a-descriptions-item>
     <a-descriptions-item label="Release Year" :span="1">{{
-      data?.result.release_year
+      data?.release_year
     }}</a-descriptions-item>
     <a-descriptions-item label="Categories" :span="1">
-      <template v-for="category in data?.result.categories">{{
+      <template v-for="category in data?.categories">{{
         category.name
       }}</template>
     </a-descriptions-item>
     <a-descriptions-item label="Length" :span="1"
-      >{{ data?.result.length }}min</a-descriptions-item
+      >{{ data?.length }}min</a-descriptions-item
     >
     <a-descriptions-item label="Language" :span="1">{{
-      data?.result.language.name
+      data?.language.name
     }}</a-descriptions-item>
     <a-descriptions-item label="Rating" :span="1">{{
-      data?.result.rating
+      data?.rating
     }}</a-descriptions-item>
     <a-descriptions-item label="Special Features" :span="1">
       <a-space>
         <template #split>
           <a-divider type="vertical" />
         </template>
-        <template v-for="feature in data?.result.special_features">{{
+        <template v-for="feature in data?.special_features">{{
           feature
         }}</template>
       </a-space>
     </a-descriptions-item>
-    <a-descriptions-item
-      label="Cast"
-      :span="2"
-      :content-style="{ display: 'block' }"
-    >
-      <p v-for="member in data?.result.cast" :key="member.actor_id">
+    <a-descriptions-item label="Cast" :span="2">
+      <p v-for="member in data?.cast" :key="member.actor_id">
         <router-link :to="`/actor/${member.actor_id}`">
           <a-avatar style="margin-right: 8px" size="small">
             <template v-slot:icon><user-outlined /></template>
@@ -78,7 +70,7 @@ const { data } = useRequest(getFilmDetail);
       </p>
     </a-descriptions-item>
     <a-descriptions-item label="fulltext" :span="2">{{
-      data?.result.fulltext
+      data?.fulltext
     }}</a-descriptions-item>
   </a-descriptions>
 </template>

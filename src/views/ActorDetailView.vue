@@ -30,24 +30,26 @@ const { data } = useRequest(queryActor);
 </script>
 
 <template>
-  <a-descriptions :title="data?.full_name" :column="1" bordered>
+  <a-descriptions
+    :title="data?.full_name"
+    :column="1"
+    :bordered="true"
+    :label-style="{ width: '200px' }"
+  >
     <template #extra>
       <a-button type="primary">btn1</a-button>
     </template>
     <a-descriptions-item label="Film Count">{{
       data?.film_count
     }}</a-descriptions-item>
-    <a-descriptions-item
-      label="Appeared In"
-      :content-style="{ display: 'block' }"
-    >
+    <a-descriptions-item label="Appeared In">
       <p v-for="film in data?.films" :key="film.film_id">
-        <a-avatar size="small" style="margin-right: 8px">
-          <template #icon><picture-outlined /></template>
-        </a-avatar>
-        <router-link :to="`/film/${film.film_id}`">{{
-          film.title
-        }}</router-link>
+        <router-link :to="`/film/${film.film_id}`">
+          <a-avatar size="small" style="margin-right: 8px">
+            <template #icon><picture-outlined /></template>
+          </a-avatar>
+          {{ film.title }}</router-link
+        >
       </p>
     </a-descriptions-item>
   </a-descriptions>
