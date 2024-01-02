@@ -45,7 +45,16 @@ interface InventoryRecord {
   store_id: number;
 }
 
-interface PaymentRecord {}
+interface PaymentRecord {
+  amount: number;
+  customer: CustomerRecord;
+  customer_id: number;
+  id: number;
+  payment_date: Date;
+  rental_id: number;
+  staff: StaffRecord;
+  staff_id: number;
+}
 
 interface StaffRecord {
   active: boolean;
@@ -98,9 +107,10 @@ const columns: TableColumnType<RentalRecord>[] = [
     title: 'Customer',
   },
   {
-    key: 'inventory_film_title',
+    key: 'title',
     dataIndex: ['inventory', 'film', 'title'],
     title: 'Film',
+    sorter: { multiple: 7 },
     width: 200,
   },
   {
@@ -124,11 +134,13 @@ const columns: TableColumnType<RentalRecord>[] = [
   {
     key: 'payments',
     title: 'Payments',
+    sorter: { multiple: 5 },
   },
   {
-    key: 'inventory_store_id',
+    key: 'store_id',
     dataIndex: ['inventory', 'store_id'],
     title: 'Store Id',
+    sorter: { multiple: 6 },
   },
   { key: 'staff_name', title: 'Staff' },
 ];
@@ -172,6 +184,10 @@ const onTableChange: TableProps<RentalRecord>['onChange'] = function (
 
   run({ page: pagination.current, size: pagination.pageSize, sorts });
 };
+
+function sumArrayToFixed(arrayNum: number[], precision: number = 2): string {
+  return arrayNum.reduce((prev, curr) => prev + curr).toFixed(precision);
+}
 </script>
 
 <template>
@@ -191,22 +207,40 @@ const onTableChange: TableProps<RentalRecord>['onChange'] = function (
   >
     <template #bodyCell="{ column, record }">
       <template v-if="column.key === 'customer_name'">
-        <router-link :to="`/customer/${record.customer.id}`"
-          >{{ record.customer.first_name }}
-          {{ record.customer.last_name }}
+        <!-- <router-link :to="`/customer/${record.customer.id}`"> -->
+        {{ record.customer.first_name }}
+        {{ record.customer.last_name }}
+        <!-- </router-link> -->
+      </template>
+      <template v-if="column.key === 'title'">
+        <router-link :to="`/film/${record.inventory.film_id}`">
+          {{ record.inventory.film.title }}
         </router-link>
       </template>
-      <template v-if="column.key === 'inventory_film_title'"
-        ><router-link :to="`/film/${record.inventory.film_id}`">{{
-          record.inventory.film.title
-        }}</router-link></template
-      >
-      <template v-if="column.key === 'staff_name'"
-        ><router-link :to="`/staff/${record.staff.id}`"
-          >{{ record.staff.first_name }}
-          {{ record.staff.last_name }}</router-link
-        ></template
-      >
+      <template v-if="column.key === 'staff_name'">
+        <!-- <router-link :to="`/staff/${record.staff.id}`"> -->
+        {{ record.staff.first_name }}
+        {{ record.staff.last_name }}
+        <!-- </router-link> -->
+      </template>
+      <template v-if="column.key === 'return_date'">
+        {{ record.return_date ?? 'not returned' }}
+      </template>
+      <template v-if="column.key === 'payments'">
+        <template v-if="0 === record.payments.length">未支付</template>
+        <template v-else-if="1 === record.payments.length">{{
+          record.payments[0].amount.toFixed(2)
+        }}</template>
+        <template v-else-if="1 < record.payments.length">
+          {{
+            sumArrayToFixed(
+              record.payments.map((payment: PaymentRecord) => payment.amount)
+            )
+          }}
+          <a-tag color="geekblue">{{ record.payments.length }}</a-tag>
+        </template>
+        <template v-else>未知</template>
+      </template>
     </template>
   </a-table>
 </template>
