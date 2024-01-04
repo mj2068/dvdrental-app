@@ -1,8 +1,12 @@
 <script setup lang="ts">
-import type { TableColumnType, TableProps } from 'ant-design-vue';
 import axios from 'axios';
+import { ref } from 'vue';
 import { usePagination } from 'vue-request';
+import dayjs from 'dayjs';
+
+import type { TableColumnType, TableProps } from 'ant-design-vue';
 import type { FilmRecord } from './FilmListView.vue';
+import type { Dayjs } from 'dayjs';
 
 interface RentalsQueryParams {
   customerId?: number;
@@ -103,8 +107,9 @@ const columns: TableColumnType<RentalRecord>[] = [
     sorter: { multiple: 1 },
   },
   {
-    key: 'customer_name',
+    key: 'customer_last_name',
     title: 'Customer',
+    sorter: { multiple: 8 },
   },
   {
     key: 'title',
@@ -145,53 +150,166 @@ const columns: TableColumnType<RentalRecord>[] = [
   { key: 'staff_name', title: 'Staff' },
 ];
 
-async function queryRentals(params?: RentalsQueryParams | URLSearchParams) {
+async function queryRentals(params?: RentalsQueryParams) {
   const result = await axios.get<RentalsQueryResult>('/rental', { params });
   return result.data;
 }
 
-const { run, data, pageSize, current, total, loading } = usePagination(
-  queryRentals,
-  {
+const { run, data, loading, pageSize, current, total, totalPage } =
+  usePagination(queryRentals, {
     pagination: {
       currentKey: 'page',
       pageSizeKey: 'size',
       totalKey: 'total',
       totalPageKey: 'pages',
     },
-  }
-);
+    onAfter(_params) {
+      /* ! DON'T EVER MODIFY `current` or `pageSize` here.
+       * vue-request monitors them to trigger query.
+       * modify them will risk infinite loop.
+       *
+       * 2024年1月4日 13点14分:
+       * after some research, there's no other way. have to change `current`
+       * here. so must make the logic and checks impeccable
+       */
+      if (
+        // total return 0 if no data found
+        total.value !== 0 &&
+        // same idea, totalPage(pages) is 0 if and only if there is no data
+        totalPage.value !== 0 &&
+        // and current is greater than totalPage, only then make request again
+        current.value > totalPage.value
+      ) {
+        current.value = 1;
+      }
+    },
+  });
 
+const sorts = ref<string[]>([]);
 const onTableChange: TableProps<RentalRecord>['onChange'] = function (
   pagination: { pageSize?: number; current?: number },
   _filters,
   sorter
 ) {
-  const sorts = [];
+  console.log(pagination);
+
   if (sorter) {
-    if (Array.isArray(sorter)) {
-      for (const s of sorter) {
-        sorts.push(`${s.columnKey},${s.order === 'ascend' ? '0' : '1'}`);
-      }
-    } else {
+    sorts.value = [];
+    if (!Array.isArray(sorter)) {
       if (sorter.column) {
-        sorts.push(
+        sorts.value.push(
           `${sorter.columnKey},${sorter.order === 'ascend' ? '0' : '1'}`
         );
+      } else {
+        sorts.value = [];
+      }
+    } else {
+      for (const s of sorter) {
+        sorts.value.push(`${s.columnKey},${s.order === 'ascend' ? '0' : '1'}`);
       }
     }
   }
 
-  run({ page: pagination.current, size: pagination.pageSize, sorts });
+  if (pagination.current) current.value = pagination.current;
+  if (pagination.pageSize) pageSize.value = pagination.pageSize;
+
+  runToRefresh();
 };
 
 function sumArrayToFixed(arrayNum: number[], precision: number = 2): string {
   return arrayNum.reduce((prev, curr) => prev + curr).toFixed(precision);
 }
+
+type DatetimeRange = [Dayjs, Dayjs];
+
+const rentalDateRange = ref<DatetimeRange>();
+const returnDateRange = ref<DatetimeRange>();
+
+function runToRefresh() {
+  run({
+    page: current.value,
+    size: pageSize.value,
+    sorts: sorts.value,
+    rentalStart: rentalDateRange.value?.[0]?.toDate(),
+    rentalEnd: rentalDateRange.value?.[1]?.toDate(),
+    returnStart: returnDateRange.value?.[0]?.toDate(),
+    returnEnd: returnDateRange.value?.[1]?.toDate(),
+  });
+}
+
+function test2() {}
 </script>
 
 <template>
   <a-divider></a-divider>
+
+  <div style="display: flex; justify-content: center">
+    <a-row :gutter="[24, 24]" style="width: 80%">
+      <a-col :span="12">
+        <span class="filter-input-label">Rental Date: </span>
+        <div style="width: 75%; display: inline-block; vertical-align: middle">
+          <a-range-picker
+            v-model:value="rentalDateRange"
+            :default-picker-value="[dayjs('2005/05/01'), dayjs('2006/06/01')]"
+            :show-time="{
+              defaultValue: [
+                dayjs('00:00:00', 'HH:mm:ss'),
+                dayjs('23:59:59', 'HH:mm:ss'),
+              ],
+            }"
+            :allow-empty="[true, true]"
+          >
+            <template #renderExtraFooter>
+              <div style="text-align: right; margin-right: 12px">
+                <a-button size="small" type="primary" @click="console.log"
+                  >零点</a-button
+                >
+              </div>
+            </template>
+          </a-range-picker>
+        </div>
+      </a-col>
+      <a-col :span="12">
+        <span class="filter-input-label">Return Date: </span>
+        <div style="width: 75%; display: inline-block; vertical-align: middle">
+          <a-range-picker
+            v-model:value="returnDateRange"
+            :default-picker-value="[dayjs('2005/01/01'), dayjs('2005/06/01')]"
+            :show-time="{
+              defaultValue: [
+                dayjs('00:00:00', 'HH:mm:ss'),
+                dayjs('23:59:59', 'HH:mm:ss'),
+              ],
+            }"
+            :allow-empty="[true, true]"
+          >
+            <template #renderExtraFooter>
+              <div style="text-align: right; margin-right: 12px">
+                <a-button size="small" type="primary" @click="console.log"
+                  >零点</a-button
+                >
+              </div>
+            </template>
+          </a-range-picker>
+        </div>
+      </a-col>
+    </a-row>
+  </div>
+
+  <div style="display: flex; justify-content: center">
+    <a-row style="width: 80%; margin-top: 16px">
+      <a-col :span="24" style="text-align: end">
+        <a-space>
+          <!-- <template #split><a-divider type="vertical" /></template> -->
+          <a-button @click="test2">test2</a-button>
+          <a-button @click="runToRefresh" type="primary">refresh</a-button>
+        </a-space>
+      </a-col>
+    </a-row>
+  </div>
+
+  <a-divider></a-divider>
+
   <a-table
     :columns="columns"
     row_key="id"
@@ -202,11 +320,16 @@ function sumArrayToFixed(arrayNum: number[], precision: number = 2): string {
       pageSize,
       total,
       showQuickJumper: true,
+      showSizeChanger: true,
+      showTotal: (total: number, range: number[]) =>
+        `第 ${range[0]}-${range[1]} 条（共 ${total} 条）`,
+      responsive: true,
+      position: ['bottomCenter'],
     }"
     v-on:change="onTableChange"
   >
     <template #bodyCell="{ column, record }">
-      <template v-if="column.key === 'customer_name'">
+      <template v-if="column.key === 'customer_last_name'">
         <!-- <router-link :to="`/customer/${record.customer.id}`"> -->
         {{ record.customer.first_name }}
         {{ record.customer.last_name }}
@@ -243,4 +366,17 @@ function sumArrayToFixed(arrayNum: number[], precision: number = 2): string {
       </template>
     </template>
   </a-table>
+  <a-space>
+    <template #split> </template>
+    <span>{{ current }}</span>
+    <span>{{ pageSize }}</span>
+    <span>total: </span><span>{{ total }}</span> <span>totalPage: </span
+    ><span>{{ totalPage }}</span>
+  </a-space>
 </template>
+
+<style lang="scss">
+.filter-input-label {
+  font-weight: bold;
+}
+</style>

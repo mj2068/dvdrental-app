@@ -360,7 +360,7 @@ const filterSearchTitle = ref<string>();
   </a-table>
 </template>
 
-<style>
+<style scoped>
 span.filter-input-label {
   font-weight: bold;
 }

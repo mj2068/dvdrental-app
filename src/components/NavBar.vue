@@ -3,7 +3,7 @@
 <template>
   <a-space>
     <template v-slot:split>
-      <a-divider type="vertical"></a-divider>
+      <a-divider type="vertical" />
     </template>
     <router-link to="/film">film</router-link>
     <router-link to="/actor">actor</router-link>
