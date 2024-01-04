@@ -4,7 +4,11 @@ import { ref } from 'vue';
 import { usePagination } from 'vue-request';
 import dayjs from 'dayjs';
 
-import type { TableColumnType, TableProps } from 'ant-design-vue';
+import type {
+  RadioGroupProps,
+  TableColumnType,
+  TableProps,
+} from 'ant-design-vue';
 import type { FilmRecord } from './FilmListView.vue';
 import type { Dayjs } from 'dayjs';
 
@@ -177,9 +181,10 @@ const { run, data, loading, pageSize, current, total, totalPage } =
         total.value !== 0 &&
         // same idea, totalPage(pages) is 0 if and only if there is no data
         totalPage.value !== 0 &&
-        // and current is greater than totalPage, only then make request again
+        // and current is greater than totalPage
         current.value > totalPage.value
       ) {
+        // only then change `current` and let vue-request refresh
         current.value = 1;
       }
     },
@@ -220,11 +225,6 @@ function sumArrayToFixed(arrayNum: number[], precision: number = 2): string {
   return arrayNum.reduce((prev, curr) => prev + curr).toFixed(precision);
 }
 
-type DatetimeRange = [Dayjs, Dayjs];
-
-const rentalDateRange = ref<DatetimeRange>();
-const returnDateRange = ref<DatetimeRange>();
-
 function runToRefresh() {
   run({
     page: current.value,
@@ -234,8 +234,29 @@ function runToRefresh() {
     rentalEnd: rentalDateRange.value?.[1]?.toDate(),
     returnStart: returnDateRange.value?.[0]?.toDate(),
     returnEnd: returnDateRange.value?.[1]?.toDate(),
+    isReturned: isReturned.value,
+    isPaid: isPaid.value,
   });
 }
+
+type DatetimeRange = [Dayjs, Dayjs];
+
+const rentalDateRange = ref<DatetimeRange>();
+const returnDateRange = ref<DatetimeRange>();
+
+const isReturnedFilterOptions: RadioGroupProps['options'] = [
+  { label: 'All', value: undefined },
+  { label: 'Returned', value: true },
+  { label: 'Not returned', value: false },
+];
+const isReturned = ref<boolean | undefined>();
+
+const isPaidFilterOptions: RadioGroupProps['options'] = [
+  { label: 'All', value: undefined },
+  { label: 'Paid', value: true },
+  { label: 'Not paid', value: false },
+];
+const isPaid = ref<boolean | undefined>();
 
 function test2() {}
 </script>
@@ -292,6 +313,20 @@ function test2() {}
             </template>
           </a-range-picker>
         </div>
+      </a-col>
+      <a-col :span="8">
+        <span class="filter-input-label">Return status: </span>
+        <a-radio-group
+          v-model:value="isReturned"
+          :options="isReturnedFilterOptions"
+        ></a-radio-group>
+      </a-col>
+      <a-col :span="8">
+        <span class="filter-input-label">Payment status: </span>
+        <a-radio-group
+          v-model:value="isPaid"
+          :options="isPaidFilterOptions"
+        ></a-radio-group>
       </a-col>
     </a-row>
   </div>
