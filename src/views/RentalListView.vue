@@ -1,16 +1,23 @@
 <script setup lang="ts">
 import axios from 'axios';
-import { ref } from 'vue';
-import { usePagination } from 'vue-request';
+import { computed, onMounted, ref } from 'vue';
+import { usePagination, useRequest } from 'vue-request';
 import dayjs from 'dayjs';
 
 import type {
+  AutoCompleteProps,
   RadioGroupProps,
+  SelectProps,
   TableColumnType,
   TableProps,
 } from 'ant-design-vue';
 import type { FilmRecord } from './FilmListView.vue';
 import type { Dayjs } from 'dayjs';
+import type {
+  LabeledValue,
+  DefaultOptionType,
+  SelectValue,
+} from 'ant-design-vue/es/select';
 
 interface RentalsQueryParams {
   customerId?: number;
@@ -66,8 +73,6 @@ interface PaymentRecord {
 
 interface StaffRecord {
   active: boolean;
-  // implement later
-  address: any;
   address_id: number;
   email: string;
   first_name: string;
@@ -77,6 +82,8 @@ interface StaffRecord {
   password: string;
   store_id: number;
   username: string;
+
+  address: AddressRecord | null;
 }
 
 interface RentalRecord {
@@ -93,6 +100,8 @@ interface RentalRecord {
   staff: StaffRecord;
 }
 
+export interface AddressRecord {}
+
 interface RentalsQueryResult {
   data: RentalRecord[];
   gross: number;
@@ -100,6 +109,10 @@ interface RentalsQueryResult {
   pages: number;
   size: number;
   total: number;
+}
+
+interface StaffsQueryResult {
+  data: StaffRecord[];
 }
 
 const columns: TableColumnType<RentalRecord>[] = [
@@ -114,13 +127,14 @@ const columns: TableColumnType<RentalRecord>[] = [
     key: 'customer_last_name',
     title: 'Customer',
     sorter: { multiple: 8 },
+    width: 240,
   },
   {
     key: 'title',
     dataIndex: ['inventory', 'film', 'title'],
     title: 'Film',
     sorter: { multiple: 7 },
-    width: 200,
+    width: 240,
   },
   {
     key: 'inventory_id',
@@ -153,6 +167,13 @@ const columns: TableColumnType<RentalRecord>[] = [
   },
   { key: 'staff_name', title: 'Staff' },
 ];
+
+onMounted(function () {
+  console.log('RentalListView - onMounted');
+
+  // get staffs for the filter form
+  staffsRequest.run();
+});
 
 async function queryRentals(params?: RentalsQueryParams) {
   const result = await axios.get<RentalsQueryResult>('/rental', { params });
@@ -236,6 +257,7 @@ function runToRefresh() {
     returnEnd: returnDateRange.value?.[1]?.toDate(),
     isReturned: isReturned.value,
     isPaid: isPaid.value,
+    staffId: staffsFilterValue.value,
   });
 }
 
@@ -258,6 +280,77 @@ const isPaidFilterOptions: RadioGroupProps['options'] = [
 ];
 const isPaid = ref<boolean | undefined>();
 
+async function getStaffs(params?: any) {
+  const result = await axios.get<StaffsQueryResult>('/staff', { params });
+  return result.data;
+}
+
+const staffsRequest = useRequest(getStaffs, { manual: true });
+
+const staffsFilterOptions = computed<SelectProps['options']>(() =>
+  staffsRequest.data.value?.data.map((staff) => ({
+    label: `${staff.first_name} ${staff.last_name}`,
+    value: staff.id,
+  }))
+);
+const staffsFilterValue = ref<number>();
+
+function filterOptionsByLabel(input: string, option: any) {
+  return option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0;
+}
+
+const filmTitleFilterOptions = ref<AutoCompleteProps['options']>([]);
+let filmTitleFilterSearchTimerId: number | null = null;
+function onFilmTitleFilterSearch(value: string) {
+  console.log(value);
+  if (!value) {
+    filmTitleFilterOptions.value = [];
+    return;
+  }
+  if (filmTitleFilterSearchTimerId) {
+    clearTimeout(filmTitleFilterSearchTimerId);
+    filmTitleFilterSearchTimerId = null;
+  }
+
+  async function find() {
+    /* 2024年1月6日 02点38分：
+     * HAHAHA!!! i just realized this is so stupid...
+     * here i make a request to the backend to get a list of film titles.
+     * but this is really really stupid, it's only for practice purposes.
+     * no need to request the whole list every time the input changes, just
+     * store the list onec, and filter in the frontend, like the staff form.
+     * and maybe i wanted to do this because i saw ant design example using
+     * taobao api to search, but that's because taobao backend provided a good
+     * and useful product title keyword filtering/suggestion api, and that list
+     * is probably like billions long...
+     */
+    const result = await axios.get<string[]>('/film_search', {
+      params: { title: value || null },
+    });
+    // console.log(result.data);
+    if (result.data) {
+      filmTitleFilterOptions.value = result.data.map((title) => ({
+        value: title,
+        label: title,
+      }));
+    }
+  }
+  filmTitleFilterSearchTimerId = setTimeout(find, 300);
+}
+
+const onFilmTitleFilterSelect: AutoCompleteProps['onSelect'] = function (
+  _value: string | number | LabeledValue,
+  option: DefaultOptionType
+) {
+  filmTitleFilterOptions.value = [option];
+};
+
+const onFilmTitleFilterChange: AutoCompleteProps['onChange'] = function (
+  value
+) {
+  if (value) filmTitleFilterOptions.value = [];
+};
+
 function test2() {}
 </script>
 
@@ -265,7 +358,7 @@ function test2() {}
   <a-divider></a-divider>
 
   <div style="display: flex; justify-content: center">
-    <a-row :gutter="[24, 24]" style="width: 80%">
+    <a-row :gutter="[24, 8]" style="width: 80%">
       <a-col :span="12">
         <span class="filter-input-label">Rental Date: </span>
         <div style="width: 75%; display: inline-block; vertical-align: middle">
@@ -315,24 +408,39 @@ function test2() {}
         </div>
       </a-col>
       <a-col :span="8">
-        <span class="filter-input-label">Return status: </span>
+        <span class="filter-input-label">Return Status: </span>
         <a-radio-group
           v-model:value="isReturned"
           :options="isReturnedFilterOptions"
         ></a-radio-group>
       </a-col>
       <a-col :span="8">
-        <span class="filter-input-label">Payment status: </span>
+        <span class="filter-input-label">Payment Status: </span>
         <a-radio-group
           v-model:value="isPaid"
           :options="isPaidFilterOptions"
         ></a-radio-group>
       </a-col>
-    </a-row>
-  </div>
-
-  <div style="display: flex; justify-content: center">
-    <a-row style="width: 80%; margin-top: 16px">
+      <a-col :span="8">
+        <span class="filter-input-label">Staff: </span>
+        <a-select
+          :options="staffsFilterOptions"
+          style="width: 75%"
+          v-model:value="staffsFilterValue"
+          allow-clear
+          show-search
+          :filter-option="filterOptionsByLabel"
+        ></a-select>
+      </a-col>
+      <a-col :span="8">
+        <span class="filter-input-label">Film Title: </span>
+        <a-auto-complete
+          style="width: 75%"
+          @search="onFilmTitleFilterSearch"
+          :options="filmTitleFilterOptions"
+          @select="onFilmTitleFilterSelect"
+        ></a-auto-complete>
+      </a-col>
       <a-col :span="24" style="text-align: end">
         <a-space>
           <!-- <template #split><a-divider type="vertical" /></template> -->
@@ -342,6 +450,10 @@ function test2() {}
       </a-col>
     </a-row>
   </div>
+
+  <!-- <div style="display: flex; justify-content: center">
+    <a-row style="width: 80%; margin-top: 16px"> </a-row>
+  </div> -->
 
   <a-divider></a-divider>
 
@@ -402,11 +514,12 @@ function test2() {}
     </template>
   </a-table>
   <a-space>
-    <template #split> </template>
-    <span>{{ current }}</span>
-    <span>{{ pageSize }}</span>
-    <span>total: </span><span>{{ total }}</span> <span>totalPage: </span
-    ><span>{{ totalPage }}</span>
+    <template #split></template>
+    <span>current: {{ current }}</span>
+    <span>pageSize: {{ pageSize }}</span>
+    <span>total: {{ total }}</span>
+    <span>totalPage: {{ totalPage }}</span>
+    <span>sorts: {{ sorts }}</span>
   </a-space>
 </template>
 
