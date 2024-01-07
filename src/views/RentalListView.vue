@@ -11,13 +11,11 @@ import type {
   TableColumnType,
   TableProps,
 } from 'ant-design-vue';
-import type { FilmRecord } from './FilmListView.vue';
 import type { Dayjs } from 'dayjs';
-import type {
-  LabeledValue,
-  DefaultOptionType,
-  SelectValue,
-} from 'ant-design-vue/es/select';
+import type { LabeledValue, DefaultOptionType } from 'ant-design-vue/es/select';
+import type { StaffRecord } from '@/types/records/staff';
+import type { RentalRecord } from '@/types/records/rental';
+import type { PaymentRecord } from '@/types/records/payment';
 
 interface RentalsQueryParams {
   customerId?: number;
@@ -33,74 +31,8 @@ interface RentalsQueryParams {
   page?: number;
   size?: number;
   sorts?: string[];
+  title?: string;
 }
-
-interface CustomerRecord {
-  id: number;
-  active: number;
-  activebool: boolean;
-  // implement later :p
-  address: any;
-  address_id: number;
-  create_date: Date;
-  email: string;
-  last_name: string;
-  first_name: string;
-  last_update: Date;
-  store_id: number;
-}
-
-interface InventoryRecord {
-  id: number;
-  film_id: number;
-  film: FilmRecord;
-  last_update: Date;
-  // implatement later
-  store: any;
-  store_id: number;
-}
-
-interface PaymentRecord {
-  amount: number;
-  customer: CustomerRecord;
-  customer_id: number;
-  id: number;
-  payment_date: Date;
-  rental_id: number;
-  staff: StaffRecord;
-  staff_id: number;
-}
-
-interface StaffRecord {
-  active: boolean;
-  address_id: number;
-  email: string;
-  first_name: string;
-  last_name: string;
-  id: number;
-  last_update: Date;
-  password: string;
-  store_id: number;
-  username: string;
-
-  address: AddressRecord | null;
-}
-
-interface RentalRecord {
-  id: number;
-  customer_id: number;
-  customer: CustomerRecord;
-  inventory_id: number;
-  inventory: InventoryRecord;
-  last_update: Date;
-  payments: PaymentRecord[];
-  rental_date: Date;
-  return_date: Date;
-  staff_id: number;
-  staff: StaffRecord;
-}
-
-export interface AddressRecord {}
 
 interface RentalsQueryResult {
   data: RentalRecord[];
@@ -258,6 +190,7 @@ function runToRefresh() {
     isReturned: isReturned.value,
     isPaid: isPaid.value,
     staffId: staffsFilterValue.value,
+    title: filmTitleFilterValue.value,
   });
 }
 
@@ -299,6 +232,7 @@ function filterOptionsByLabel(input: string, option: any) {
   return option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0;
 }
 
+const filmTitleFilterValue = ref<string>();
 const filmTitleFilterOptions = ref<AutoCompleteProps['options']>([]);
 let filmTitleFilterSearchTimerId: number | null = null;
 function onFilmTitleFilterSearch(value: string) {
@@ -342,6 +276,7 @@ const onFilmTitleFilterSelect: AutoCompleteProps['onSelect'] = function (
   _value: string | number | LabeledValue,
   option: DefaultOptionType
 ) {
+  // once a value is selected, make the options list only has selected one
   filmTitleFilterOptions.value = [option];
 };
 
@@ -439,6 +374,7 @@ function test2() {}
           @search="onFilmTitleFilterSearch"
           :options="filmTitleFilterOptions"
           @select="onFilmTitleFilterSelect"
+          v-model:value="filmTitleFilterValue"
         ></a-auto-complete>
       </a-col>
       <a-col :span="24" style="text-align: end">
@@ -477,10 +413,10 @@ function test2() {}
   >
     <template #bodyCell="{ column, record }">
       <template v-if="column.key === 'customer_last_name'">
-        <!-- <router-link :to="`/customer/${record.customer.id}`"> -->
-        {{ record.customer.first_name }}
-        {{ record.customer.last_name }}
-        <!-- </router-link> -->
+        <router-link :to="`/customer/${record.customer.id}`">
+          {{ record.customer.first_name }}
+          {{ record.customer.last_name }}
+        </router-link>
       </template>
       <template v-if="column.key === 'title'">
         <router-link :to="`/film/${record.inventory.film_id}`">

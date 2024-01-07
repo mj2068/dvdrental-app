@@ -2,7 +2,7 @@
 import axios from 'axios';
 import { useRequest } from 'vue-request';
 import type { ActorRecord } from './ActorListView.vue';
-import type { FilmRecord } from './FilmListView.vue';
+import type { FilmRecord } from '@/types/records/film';
 import { UserOutlined } from '@ant-design/icons-vue';
 
 /** ************ types ************ */

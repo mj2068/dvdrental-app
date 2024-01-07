@@ -14,70 +14,12 @@ import type {
   SorterResult,
   SortOrder,
 } from 'ant-design-vue/es/table/interface';
+import type { FilmRecord, MPAARating } from '@/types/records/film';
 
 interface QueryParams {
   [key: string]: any;
   offset?: number;
   limit?: number;
-}
-
-export interface FilmRecord {
-  film_id: number;
-  title: string;
-  description?: string;
-  release_year: number;
-  rental_rate: number;
-  rental_duration: number;
-  replacement_cost: number;
-  length: number;
-  language_id: number;
-  rating: MPAARating;
-  special_features: string[];
-  last_update: Date;
-  fulltext: string;
-  language: LanguageRecord;
-  categories: CategoryRecord[];
-  cast_count: number;
-}
-
-type MPAARating = 'G' | 'PG' | 'PG-13' | 'R' | 'NC-17';
-
-type Language =
-  | 'English'
-  | 'Italian'
-  | 'Japanese'
-  | 'Mandarin'
-  | 'French'
-  | 'German';
-
-interface LanguageRecord {
-  language_id: number;
-  name: Language;
-  last_update: Date;
-}
-
-type Category =
-  | 'Action'
-  | 'Animation'
-  | 'Children'
-  | 'Classics'
-  | 'Comedy'
-  | 'Documentary'
-  | 'Drama'
-  | 'Family'
-  | 'Foreign'
-  | 'Games'
-  | 'Horror'
-  | 'Music'
-  | 'New'
-  | 'Sci-Fi'
-  | 'Sports'
-  | 'Travel';
-
-interface CategoryRecord {
-  category_id: number;
-  name: Category;
-  last_update: Date;
 }
 
 interface QueryResultFilm {
