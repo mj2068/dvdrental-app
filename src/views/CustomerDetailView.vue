@@ -1,9 +1,14 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { onMounted } from 'vue';
 import axios from 'axios';
 import { useRoute } from 'vue-router';
 import { useRequest } from 'vue-request';
+
+import type { TableColumnType } from 'ant-design-vue';
+
 import type { CustomerRecord } from '@/types/records/customer';
+import type { RentalRecord } from '@/types/records/rental';
+import type { PaymentRecord } from '@/types/records/payment';
 
 interface CustomerDetailResponse {
   data: CustomerRecord;
@@ -23,6 +28,39 @@ const { run, data } = useRequest(requestCustomer, { manual: true });
 onMounted(function () {
   run();
 });
+
+const rentalsTableColumns: TableColumnType<RentalRecord>[] = [
+  { key: 'id', dataIndex: 'id', title: 'ID' },
+  {
+    key: 'inventory_film_title',
+    dataIndex: ['inventory', 'film', 'title'],
+    title: 'Film',
+  },
+  {
+    key: 'inventory_film_rental_rate',
+    dataIndex: ['inventory', 'film', 'rental_rate'],
+    title: 'Rate',
+  },
+  {
+    key: 'rental_date',
+    dataIndex: 'rental_date',
+    title: 'Rental Date',
+  },
+  { key: 'return_data', dataIndex: 'return_date', title: 'Return Date' },
+  { key: 'payments', title: 'Payments' },
+];
+
+const paymentsTableColumns: TableColumnType<PaymentRecord>[] = [
+  { key: 'id', dataIndex: 'id', title: 'ID' },
+  {
+    key: 'rental_inventory_film_title',
+    dataIndex: ['rental', 'inventory', 'film', 'title'],
+    title: 'Film',
+  },
+  { key: 'amount', dataIndex: 'amount', title: 'Amount' },
+  { key: 'payment_data', dataIndex: 'payment_date', title: 'Date' },
+  { key: 'staff_id', dataIndex: 'staff_id', title: 'Staff ID' },
+];
 </script>
 
 <template>
@@ -53,12 +91,8 @@ onMounted(function () {
       <a-descriptions-item label="Phone">{{
         data?.address?.phone
       }}</a-descriptions-item>
-      <a-descriptions-item label="Country">{{
-        data?.address?.country
-      }}</a-descriptions-item>
-      <a-descriptions-item label="City">{{
-        data?.address?.city
-      }}</a-descriptions-item>
+      <a-descriptions-item label="Country">...</a-descriptions-item>
+      <a-descriptions-item label="City">...</a-descriptions-item>
       <a-descriptions-item label="District">{{
         data?.address?.district
       }}</a-descriptions-item>
@@ -71,13 +105,39 @@ onMounted(function () {
       <a-descriptions-item label="Address2">{{
         data?.address?.address2
       }}</a-descriptions-item>
-      <a-descriptions-item label="Rentals">
-        <p v-for="rental in data?.rentals" :key="rental.id">{{ rental.id }}</p>
+      <a-descriptions-item label="Rentals" :span="2">
+        <a-table
+          size="middle"
+          :data-source="data?.rentals!"
+          :columns="rentalsTableColumns"
+          :pagination="{ showTotal: (total) => `Total: ${total}` }"
+        >
+          <template #bodyCell="{ column, record }">
+            <template v-if="column.key === 'payments'">
+              <a-space>
+                <template #split>
+                  <a-divider type="vertical"></a-divider>
+                </template>
+                <template v-if="record.payments.length">
+                  <span v-for="payment in record.payments" :key="payment.id">{{
+                    payment.amount
+                  }}</span>
+                </template>
+                <template v-else>unpaid</template>
+              </a-space>
+            </template>
+          </template>
+        </a-table>
       </a-descriptions-item>
       <a-descriptions-item label="Payments">
-        <p v-for="payment in data?.payments" :key="payment.id">
-          {{ payment.id }}
-        </p>
+        <a-table
+          size="small"
+          :data-source="data?.payments!"
+          :columns="paymentsTableColumns"
+          :pagination="{
+            showTotal: (total) => `Total: ${total}`,
+          }"
+        ></a-table>
       </a-descriptions-item>
     </a-descriptions>
   </div>
