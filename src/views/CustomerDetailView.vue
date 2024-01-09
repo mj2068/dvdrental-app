@@ -135,7 +135,12 @@ const paymentsTableColumns: TableColumnType<PaymentRecord>[] = [
           :pagination="{ showTotal: (total) => `Total: ${total}` }"
         >
           <template #bodyCell="{ column, record }">
-            <template v-if="column.key === 'payments'">
+            <template v-if="column.key === 'id'">
+              <IDLink :to="`/rental/${record.id}`">
+                {{ record.id }}
+              </IDLink>
+            </template>
+            <template v-else-if="column.key === 'payments'">
               <a-space>
                 <template #split>
                   <a-divider type="vertical"></a-divider>

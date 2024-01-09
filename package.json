@@ -16,6 +16,7 @@
     "axios": "^1.6.2",
     "dayjs": "^1.11.10",
     "pinia": "^2.0.28",
+    "pug": "^3.0.2",
     "vue": "^3.2.45",
     "vue-request": "^2.0.4",
     "vue-router": "^4.1.6"
@@ -26,6 +27,7 @@
     "@vitejs/plugin-vue": "^4.0.0",
     "@vue/eslint-config-prettier": "^7.0.0",
     "@vue/eslint-config-typescript": "^11.0.0",
+    "@vue/language-plugin-pug": "^1.8.27",
     "@vue/tsconfig": "^0.1.3",
     "eslint": "^8.22.0",
     "eslint-plugin-vue": "^9.3.0",

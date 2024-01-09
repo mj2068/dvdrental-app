@@ -12,5 +12,9 @@
     {
       "path": "./tsconfig.config.json"
     }
-  ]
+  ],
+
+  "vueCompilerOptions": {
+    "plugins": ["@vue/language-plugin-pug"]
+  }
 }
