@@ -449,14 +449,6 @@ function test2() {}
       </template>
     </template>
   </a-table>
-  <a-space>
-    <template #split></template>
-    <span>current: {{ current }}</span>
-    <span>pageSize: {{ pageSize }}</span>
-    <span>total: {{ total }}</span>
-    <span>totalPage: {{ totalPage }}</span>
-    <span>sorts: {{ sorts }}</span>
-  </a-space>
 </template>
 
 <style lang="scss">

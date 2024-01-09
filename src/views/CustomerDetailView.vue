@@ -23,35 +23,52 @@ async function requestCustomer() {
   );
   return result.data.data;
 }
-const { run, data } = useRequest(requestCustomer, { manual: true });
+const { run, data, loading } = useRequest(requestCustomer, { manual: true });
 
 onMounted(function () {
   run();
 });
 
 const rentalsTableColumns: TableColumnType<RentalRecord>[] = [
-  { key: 'id', dataIndex: 'id', title: 'ID' },
+  { key: 'id', dataIndex: 'id', title: 'ID', sorter: (a, b) => a.id - b.id },
   {
     key: 'inventory_film_title',
     dataIndex: ['inventory', 'film', 'title'],
     title: 'Film',
+    sorter: (a, b) =>
+      a.inventory!.film.title.localeCompare(b.inventory!.film.title),
   },
   {
     key: 'inventory_film_rental_rate',
     dataIndex: ['inventory', 'film', 'rental_rate'],
     title: 'Rate',
+    sorter: (a, b) =>
+      a.inventory!.film.rental_rate - b.inventory!.film.rental_rate,
   },
   {
     key: 'rental_date',
     dataIndex: 'rental_date',
     title: 'Rental Date',
+    sorter: (a, b) =>
+      new Date(a.rental_date).getTime() - new Date(b.rental_date).getTime(),
   },
-  { key: 'return_data', dataIndex: 'return_date', title: 'Return Date' },
+  {
+    key: 'return_data',
+    dataIndex: 'return_date',
+    title: 'Return Date',
+    sorter: (a, b) =>
+      new Date(a.rental_date).getTime() - new Date(b.rental_date).getTime(),
+  },
   { key: 'payments', title: 'Payments' },
 ];
 
 const paymentsTableColumns: TableColumnType<PaymentRecord>[] = [
-  { key: 'id', dataIndex: 'id', title: 'ID' },
+  { key: 'id', dataIndex: 'id', title: 'Payment ID' },
+  {
+    key: 'rental_id',
+    dataIndex: ['rental', 'id'],
+    title: 'Rental ID',
+  },
   {
     key: 'rental_inventory_film_title',
     dataIndex: ['rental', 'inventory', 'film', 'title'],
@@ -67,7 +84,12 @@ const paymentsTableColumns: TableColumnType<PaymentRecord>[] = [
   <a-divider></a-divider>
 
   <div class="main-content-container">
+    <div v-if="loading" style="display: flex; justify-content: center">
+      <a-spin />
+    </div>
+
     <a-descriptions
+      v-else
       :title="data?.full_name"
       :column="2"
       bordered
@@ -131,7 +153,7 @@ const paymentsTableColumns: TableColumnType<PaymentRecord>[] = [
       </a-descriptions-item>
       <a-descriptions-item label="Payments">
         <a-table
-          size="small"
+          size="middle"
           :data-source="data?.payments!"
           :columns="paymentsTableColumns"
           :pagination="{
