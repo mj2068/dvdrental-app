@@ -12,6 +12,8 @@ interface StaffRecord {
   store_id: number;
   username: string;
 
+  full_name: string;
+
   address: AddressRecord | null;
 }
 

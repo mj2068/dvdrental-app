@@ -49,14 +49,14 @@ interface StaffsQueryResult {
 
 const columns: TableColumnType<RentalRecord>[] = [
   {
-    key: 'rental_id',
+    key: 'id',
     dataIndex: 'id',
-    title: 'Id',
+    title: 'ID',
     width: 80,
     sorter: { multiple: 1 },
   },
   {
-    key: 'customer_last_name',
+    key: 'customer_full_name',
     title: 'Customer',
     sorter: { multiple: 8 },
     width: 240,
@@ -292,7 +292,7 @@ function test2() {}
 <template>
   <a-divider></a-divider>
 
-  <div style="display: flex; justify-content: center">
+  <div style="display: flex; justify-content: center" class="filters-container">
     <a-row :gutter="[24, 8]" style="width: 80%">
       <a-col :span="12">
         <span class="filter-input-label">Rental Date: </span>
@@ -412,7 +412,10 @@ function test2() {}
     v-on:change="onTableChange"
   >
     <template #bodyCell="{ column, record }">
-      <template v-if="column.key === 'customer_last_name'">
+      <template v-if="column.key === 'id'">
+        <IDLink :to="`/rental/${record.id}`">{{ record.id }}</IDLink>
+      </template>
+      <template v-if="column.key === 'customer_full_name'">
         <router-link :to="`/customer/${record.customer.id}`">
           {{ record.customer.first_name }}
           {{ record.customer.last_name }}
