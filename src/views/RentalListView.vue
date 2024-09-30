@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import axios from 'axios';
-import { computed, onMounted, ref } from 'vue';
-import { usePagination, useRequest } from 'vue-request';
-import dayjs from 'dayjs';
+import axios from "axios";
+import { computed, onMounted, ref } from "vue";
+import { usePagination, useRequest } from "vue-request";
+import dayjs from "dayjs";
 
 import type {
   AutoCompleteProps,
@@ -10,12 +10,13 @@ import type {
   SelectProps,
   TableColumnType,
   TableProps,
-} from 'ant-design-vue';
-import type { Dayjs } from 'dayjs';
-import type { LabeledValue, DefaultOptionType } from 'ant-design-vue/es/select';
-import type { StaffRecord } from '@/types/records/staff';
-import type { RentalRecord } from '@/types/records/rental';
-import type { PaymentRecord } from '@/types/records/payment';
+} from "ant-design-vue";
+import type { Dayjs } from "dayjs";
+import type { LabeledValue, DefaultOptionType } from "ant-design-vue/es/select";
+import type { StaffRecord } from "@/types/records/staff";
+import type { RentalRecord } from "@/types/records/rental";
+import type { PaymentRecord } from "@/types/records/payment";
+import type { RadioGroupChildOption } from "ant-design-vue/es/radio/Group";
 
 interface RentalsQueryParams {
   customerId?: number;
@@ -49,76 +50,77 @@ interface StaffsQueryResult {
 
 const columns: TableColumnType<RentalRecord>[] = [
   {
-    key: 'id',
-    dataIndex: 'id',
-    title: 'ID',
-    width: 80,
+    key: "id",
+    dataIndex: "id",
+    title: "Rental ID",
     sorter: { multiple: 1 },
   },
   {
-    key: 'customer_full_name',
-    title: 'Customer',
+    key: "customer_full_name",
+    title: "Customer",
     sorter: { multiple: 8 },
-    width: 240,
+    width: 200,
   },
   {
-    key: 'title',
-    dataIndex: ['inventory', 'film', 'title'],
-    title: 'Film',
+    key: "title",
+    dataIndex: ["inventory", "film", "title"],
+    title: "Film",
     sorter: { multiple: 7 },
-    width: 240,
+    width: 200,
   },
   {
-    key: 'inventory_id',
-    dataIndex: 'inventory_id',
-    title: 'Inventory Id',
+    key: "inventory_id",
+    dataIndex: "inventory_id",
+    title: "Inventory ID",
     sorter: { multiple: 2 },
   },
   {
-    key: 'rental_date',
-    dataIndex: 'rental_date',
-    title: 'Rental Date',
+    key: "rental_date",
+    dataIndex: "rental_date",
+    title: "Rental Date",
     sorter: { multiple: 3 },
+    width: "12rem",
   },
   {
-    key: 'return_date',
-    dataIndex: 'return_date',
-    title: 'Return Date',
+    key: "return_date",
+    dataIndex: "return_date",
+    title: "Return Date",
     sorter: { multiple: 4 },
+    width: "12rem",
   },
   {
-    key: 'payments',
-    title: 'Payments',
+    key: "payments",
+    title: "Payments",
     sorter: { multiple: 5 },
   },
   {
-    key: 'store_id',
-    dataIndex: ['inventory', 'store_id'],
-    title: 'Store Id',
+    key: "store_id",
+    dataIndex: ["inventory", "store_id"],
+    title: "Store ID",
     sorter: { multiple: 6 },
   },
-  { key: 'staff_name', title: 'Staff' },
+  { key: "staff_name", title: "Staff" },
 ];
 
 onMounted(function () {
-  console.log('RentalListView - onMounted');
+  if (import.meta.env.DEV) console.log("RentalListView - onMounted");
 
   // get staffs for the filter form
   staffsRequest.run();
 });
 
 async function queryRentals(params?: RentalsQueryParams) {
-  const result = await axios.get<RentalsQueryResult>('/rental', { params });
+  const result = await axios.get<RentalsQueryResult>("/rental", { params });
   return result.data;
 }
 
 const { run, data, loading, pageSize, current, total, totalPage } =
   usePagination(queryRentals, {
     pagination: {
-      currentKey: 'page',
-      pageSizeKey: 'size',
-      totalKey: 'total',
-      totalPageKey: 'pages',
+      currentKey: "page",
+      pageSizeKey: "size",
+      totalKey: "total",
+      totalPageKey: "pages",
     },
     onAfter(_params) {
       /* ! DON'T EVER MODIFY `current` or `pageSize` here.
@@ -144,26 +146,26 @@ const { run, data, loading, pageSize, current, total, totalPage } =
   });
 
 const sorts = ref<string[]>([]);
-const onTableChange: TableProps<RentalRecord>['onChange'] = function (
+const onTableChange: TableProps<RentalRecord>["onChange"] = function (
   pagination: { pageSize?: number; current?: number },
   _filters,
   sorter
 ) {
-  console.log(pagination);
+  if (import.meta.env.DEV) console.log(pagination);
 
   if (sorter) {
     sorts.value = [];
     if (!Array.isArray(sorter)) {
       if (sorter.column) {
         sorts.value.push(
-          `${sorter.columnKey},${sorter.order === 'ascend' ? '0' : '1'}`
+          `${sorter.columnKey},${sorter.order === "ascend" ? "0" : "1"}`
         );
       } else {
         sorts.value = [];
       }
     } else {
       for (const s of sorter) {
-        sorts.value.push(`${s.columnKey},${s.order === 'ascend' ? '0' : '1'}`);
+        sorts.value.push(`${s.columnKey},${s.order === "ascend" ? "0" : "1"}`);
       }
     }
   }
@@ -197,50 +199,49 @@ function runToRefresh() {
 type DatetimeRange = [Dayjs, Dayjs];
 
 const rentalDateRange = ref<DatetimeRange>();
+
 const returnDateRange = ref<DatetimeRange>();
 
-const isReturnedFilterOptions: RadioGroupProps['options'] = [
-  { label: 'All', value: undefined },
-  { label: 'Returned', value: true },
-  { label: 'Not returned', value: false },
+const isReturnedFilterOptions: RadioGroupChildOption[] = [
+  { label: "All", value: undefined },
+  { label: "Returned", value: true },
+  { label: "Not returned", value: false },
 ];
 const isReturned = ref<boolean | undefined>();
 
-const isPaidFilterOptions: RadioGroupProps['options'] = [
-  { label: 'All', value: undefined },
-  { label: 'Paid', value: true },
-  { label: 'Not paid', value: false },
+const isPaidFilterOptions: RadioGroupProps["options"] = [
+  { label: "All", value: undefined },
+  { label: "Paid", value: true },
+  { label: "Not paid", value: false },
 ];
 const isPaid = ref<boolean | undefined>();
 
 async function getStaffs(params?: any) {
-  const result = await axios.get<StaffsQueryResult>('/staff', { params });
+  const result = await axios.get<StaffsQueryResult>("/staff", { params });
   return result.data;
 }
 
 const staffsRequest = useRequest(getStaffs, { manual: true });
-
-const staffsFilterOptions = computed<SelectProps['options']>(() =>
+const staffsFilterOptions = computed<SelectProps["options"]>(() =>
   staffsRequest.data.value?.data.map((staff) => ({
     label: `${staff.first_name} ${staff.last_name}`,
     value: staff.id,
   }))
 );
 const staffsFilterValue = ref<number>();
-
 function filterOptionsByLabel(input: string, option: any) {
   return option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0;
 }
 
 const filmTitleFilterValue = ref<string>();
-const filmTitleFilterOptions = ref<AutoCompleteProps['options']>([]);
+const filmTitleFilterOptions = ref<AutoCompleteProps["options"]>([]);
 let filmTitleFilterSearchTimerId: number | null = null;
 function onFilmTitleFilterSearch(value: string) {
-  console.log(value);
   if (!value) {
     filmTitleFilterOptions.value = [];
     return;
   }
+
   if (filmTitleFilterSearchTimerId) {
     clearTimeout(filmTitleFilterSearchTimerId);
     filmTitleFilterSearchTimerId = null;
@@ -258,7 +259,7 @@ function onFilmTitleFilterSearch(value: string) {
      * and useful product title keyword filtering/suggestion api, and that list
      * is probably like billions long...
      */
-    const result = await axios.get<string[]>('/film_search', {
+    const result = await axios.get<string[]>("/film_search", {
       params: { title: value || null },
     });
     // console.log(result.data);
@@ -269,10 +270,12 @@ function onFilmTitleFilterSearch(value: string) {
       }));
     }
   }
+
+  // debouncing timer
   filmTitleFilterSearchTimerId = setTimeout(find, 300);
 }
 
-const onFilmTitleFilterSelect: AutoCompleteProps['onSelect'] = function (
+const onFilmTitleFilterSelect: AutoCompleteProps["onSelect"] = function (
   _value: string | number | LabeledValue,
   option: DefaultOptionType
 ) {
@@ -280,23 +283,22 @@ const onFilmTitleFilterSelect: AutoCompleteProps['onSelect'] = function (
   filmTitleFilterOptions.value = [option];
 };
 
-const onFilmTitleFilterChange: AutoCompleteProps['onChange'] = function (
-  value
-) {
-  if (value) filmTitleFilterOptions.value = [];
-};
-
-function test2() {}
+function clearOptions() {
+  rentalDateRange.value = undefined;
+  returnDateRange.value = undefined;
+  isReturned.value = undefined;
+  isPaid.value = undefined;
+  staffsFilterValue.value = undefined;
+  filmTitleFilterValue.value = "";
+}
 </script>
 
 <template>
-  <a-divider></a-divider>
-
-  <div style="display: flex; justify-content: center" class="filters-container">
-    <a-row :gutter="[24, 8]" style="width: 80%">
-      <a-col :span="12">
+  <a-flex class="filters-container" vertical gap="8">
+    <a-flex class="filter-options-container" wrap="wrap" gap="16">
+      <a-flex class="filter-option">
         <span class="filter-input-label">Rental Date: </span>
-        <div style="width: 75%; display: inline-block; vertical-align: middle">
+        <div>
           <a-range-picker
             v-model:value="rentalDateRange"
             :default-picker-value="[dayjs('2005/05/01'), dayjs('2006/06/01')]"
@@ -310,17 +312,15 @@ function test2() {}
           >
             <template #renderExtraFooter>
               <div style="text-align: right; margin-right: 12px">
-                <a-button size="small" type="primary" @click="console.log"
-                  >零点</a-button
-                >
+                Select the rental date range
               </div>
             </template>
           </a-range-picker>
         </div>
-      </a-col>
-      <a-col :span="12">
+      </a-flex>
+      <a-flex class="filter-option">
         <span class="filter-input-label">Return Date: </span>
-        <div style="width: 75%; display: inline-block; vertical-align: middle">
+        <div>
           <a-range-picker
             v-model:value="returnDateRange"
             :default-picker-value="[dayjs('2005/01/01'), dayjs('2005/06/01')]"
@@ -334,64 +334,64 @@ function test2() {}
           >
             <template #renderExtraFooter>
               <div style="text-align: right; margin-right: 12px">
-                <a-button size="small" type="primary" @click="console.log"
-                  >零点</a-button
-                >
+                <!-- <a-button size="small" type="primary" @click="console.log" -->
+                <!--   >零点</a-button -->
+                <!-- > -->
+                Select the return date range
               </div>
             </template>
           </a-range-picker>
         </div>
-      </a-col>
-      <a-col :span="8">
+      </a-flex>
+      <a-flex class="filter-option">
         <span class="filter-input-label">Return Status: </span>
-        <a-radio-group
-          v-model:value="isReturned"
-          :options="isReturnedFilterOptions"
-        ></a-radio-group>
-      </a-col>
-      <a-col :span="8">
+        <a-radio-group v-model:value="isReturned">
+          <a-radio
+            v-for="(option, index) in isReturnedFilterOptions"
+            :key="index"
+            :value="option.value"
+            >{{ option.label }}</a-radio
+          >
+        </a-radio-group>
+      </a-flex>
+      <a-flex class="filter-option">
         <span class="filter-input-label">Payment Status: </span>
         <a-radio-group
           v-model:value="isPaid"
           :options="isPaidFilterOptions"
         ></a-radio-group>
-      </a-col>
-      <a-col :span="8">
+      </a-flex>
+      <a-flex class="filter-option">
         <span class="filter-input-label">Staff: </span>
         <a-select
           :options="staffsFilterOptions"
-          style="width: 75%"
           v-model:value="staffsFilterValue"
           allow-clear
           show-search
           :filter-option="filterOptionsByLabel"
+          style="min-width: 12rem"
         ></a-select>
-      </a-col>
-      <a-col :span="8">
+      </a-flex>
+      <a-flex class="filter-option">
         <span class="filter-input-label">Film Title: </span>
         <a-auto-complete
-          style="width: 75%"
-          @search="onFilmTitleFilterSearch"
           :options="filmTitleFilterOptions"
-          @select="onFilmTitleFilterSelect"
           v-model:value="filmTitleFilterValue"
+          @search="onFilmTitleFilterSearch"
+          @select="onFilmTitleFilterSelect"
+          style="min-width: 12rem"
         ></a-auto-complete>
-      </a-col>
-      <a-col :span="24" style="text-align: end">
-        <a-space>
-          <!-- <template #split><a-divider type="vertical" /></template> -->
-          <a-button @click="test2">test2</a-button>
-          <a-button @click="runToRefresh" type="primary">refresh</a-button>
-        </a-space>
-      </a-col>
-    </a-row>
-  </div>
+      </a-flex>
+    </a-flex>
+    <a-flex class="filter-buttons" justify="end">
+      <a-space>
+        <a-button @click="runToRefresh" type="primary">Refresh</a-button>
+        <a-button @click="clearOptions">Clear</a-button>
+      </a-space>
+    </a-flex>
+  </a-flex>
 
-  <!-- <div style="display: flex; justify-content: center">
-    <a-row style="width: 80%; margin-top: 16px"> </a-row>
-  </div> -->
-
-  <a-divider></a-divider>
+  <a-divider />
 
   <a-table
     :columns="columns"
@@ -399,15 +399,15 @@ function test2() {}
     :data-source="data?.data"
     :loading="loading"
     :pagination="{
-      current,
-      pageSize,
-      total,
-      showQuickJumper: true,
-      showSizeChanger: true,
-      showTotal: (total: number, range: number[]) =>
-        `第 ${range[0]}-${range[1]} 条（共 ${total} 条）`,
-      responsive: true,
-      position: ['bottomCenter'],
+        current,
+        pageSize,
+        total,
+        showQuickJumper: true,
+        showSizeChanger: true,
+        showTotal: (total: number, range: number[]) =>
+            `${range[0]}-${range[1]}（Total: ${total}）`,
+        responsive: true,
+        position: ['bottomCenter'],
     }"
     v-on:change="onTableChange"
   >
@@ -433,14 +433,16 @@ function test2() {}
         <!-- </router-link> -->
       </template>
       <template v-if="column.key === 'return_date'">
-        {{ record.return_date ?? 'not returned' }}
+        {{ record.return_date ?? "-" }}
       </template>
       <template v-if="column.key === 'payments'">
-        <template v-if="0 === record.payments.length">未支付</template>
+        <template v-if="0 === record.payments.length">
+          <span style="color: darkred">UNPAID</span>
+        </template>
         <template v-else-if="1 === record.payments.length">{{
           record.payments[0].amount.toFixed(2)
         }}</template>
-        <template v-else-if="1 < record.payments.length">
+        <template v-else>
           {{
             sumArrayToFixed(
               record.payments.map((payment: PaymentRecord) => payment.amount)
@@ -448,14 +450,22 @@ function test2() {}
           }}
           <a-tag color="geekblue">{{ record.payments.length }}</a-tag>
         </template>
-        <template v-else>未知</template>
       </template>
     </template>
   </a-table>
 </template>
 
 <style lang="scss">
+.filters-container {
+  margin-inline: 2rem;
+}
+
 .filter-input-label {
   font-weight: bold;
+}
+
+.filter-option {
+  align-items: center;
+  gap: 0.5rem;
 }
 </style>

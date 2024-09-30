@@ -5,8 +5,8 @@
     <template v-slot:split>
       <a-divider type="vertical" />
     </template>
-    <router-link to="/film">film</router-link>
-    <router-link to="/actor">actor</router-link>
-    <router-link to="/rental">rental</router-link>
+    <router-link to="/film">Film</router-link>
+    <router-link to="/actor">Actor</router-link>
+    <router-link to="/rental">Rental</router-link>
   </a-space>
 </template>
