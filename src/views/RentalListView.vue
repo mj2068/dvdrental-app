@@ -455,7 +455,7 @@ function clearOptions() {
   </a-table>
 </template>
 
-<style lang="scss">
+<style scoped lang="scss">
 .filters-container {
   margin-inline: 2rem;
 }

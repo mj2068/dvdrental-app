@@ -1,0 +1,7 @@
+#app {
+  margin-inline: 0.5rem;
+}
+
+.no-shrink {
+  flex-shrink: 0;
+}

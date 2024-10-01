@@ -1,20 +1,22 @@
 <script setup lang="ts">
-import { computed, ref, onMounted } from 'vue';
-import axios from 'axios';
-import { usePagination } from 'vue-request';
-import { useRoute } from 'vue-router';
+import { computed, ref, onMounted } from "vue";
+import axios from "axios";
+import { usePagination } from "vue-request";
+import { useRoute } from "vue-router";
 
 import type {
+  TableColumnsType,
   TableColumnType,
   TablePaginationConfig,
   TableProps,
-} from 'ant-design-vue';
-
+} from "ant-design-vue";
 import type {
   SorterResult,
   SortOrder,
-} from 'ant-design-vue/es/table/interface';
-import type { FilmRecord, MPAARating } from '@/types/records/film';
+} from "ant-design-vue/es/table/interface";
+import type { FilmRecord, MPAARating } from "@/types/records/film";
+import InputNumberRange from "@/components/InputNumberRange.vue";
+import { QuestionCircleFilled } from "@ant-design/icons-vue";
 
 interface QueryParams {
   [key: string]: any;
@@ -35,82 +37,98 @@ const pageSize = ref(10);
 const currentSorter = ref<SorterResult<FilmRecord>>({});
 
 const columns = computed<TableColumnType<FilmRecord>[]>(() =>
-  [
-    {
-      key: 'film_id',
-      dataIndex: 'film_id',
-      title: 'ID',
-      width: 60,
-    },
-    {
-      key: 'title',
-      dataIndex: 'title',
-      title: 'Title',
-      ellipsis: true,
-      width: 200,
-    },
-    {
-      key: 'description',
-      dataIndex: 'description',
-      title: 'Description',
-      ellipsis: true,
-      width: 300,
-    },
-    {
-      key: 'release_year',
-      dataIndex: 'release_year',
-      title: 'Release Year',
-    },
-    {
-      key: 'rating',
-      dataIndex: 'rating',
-      title: 'Rating',
-      sorter: true,
-    },
-    {
-      key: 'length',
-      dataIndex: 'length',
-      title: 'Length',
-      sorter: true,
-    },
-    {
-      key: 'cast_count',
-      dataIndex: 'cast_count',
-      title: 'Cast Count',
-    },
-    {
-      key: 'rental_rate',
-      dataIndex: 'rental_rate',
-      title: 'Rental Rate',
-      sorter: true,
-    },
-    {
-      key: 'rental_duration',
-      dataIndex: 'rental_duration',
-      title: 'Rental Duration',
-      sorter: true,
-    },
-    {
-      key: 'replacement_cost',
-      dataIndex: 'replacement_cost',
-      title: 'Replacement Cost',
-      sorter: true,
-      // sortOrder: currentSorter.value.order,
-    },
-    {
-      key: 'action',
-      title: 'Action',
-      width: 80,
-    },
-  ]
+  (
+    [
+      {
+        key: "film_id",
+        dataIndex: "film_id",
+        title: "ID",
+        width: 60,
+        sorter: true,
+      },
+      {
+        key: "title",
+        dataIndex: "title",
+        title: "Title",
+        ellipsis: true,
+        sorter: true,
+        width: "12rem",
+      },
+      {
+        key: "description",
+        dataIndex: "description",
+        title: "Description",
+        ellipsis: true,
+        width: "12rem",
+      },
+      {
+        key: "release_year",
+        dataIndex: "release_year",
+        title: "Release Year",
+        sorter: true,
+        width: "6rem",
+      },
+      {
+        key: "rating",
+        dataIndex: "rating",
+        title: "Rating",
+        sorter: true,
+        width: "6rem",
+      },
+      {
+        key: "length",
+        dataIndex: "length",
+        title: "Length",
+        sorter: true,
+        width: "6rem",
+      },
+      {
+        key: "cast_count",
+        dataIndex: "cast_count",
+        title: "Cast Count",
+        sorter: true,
+        width: "6rem",
+      },
+      {
+        key: "rental_rate",
+        dataIndex: "rental_rate",
+        title: "Rental Rate",
+        sorter: true,
+        width: "6rem",
+      },
+      {
+        key: "rental_duration",
+        dataIndex: "rental_duration",
+        title: "Rental Duration",
+        sorter: true,
+        width: "6rem",
+      },
+      {
+        key: "replacement_cost",
+        dataIndex: "replacement_cost",
+        title: "Replacement Cost",
+        sorter: true,
+        width: "8rem",
+        // sortOrder: currentSorter.value.order,
+      },
+      {
+        key: "action",
+        title: "Action",
+        width: "12rem",
+        align: "center",
+      },
+    ] as TableColumnsType<FilmRecord>
+  )
     /**
      * this map call adds the sortOrder property to each column with sorter
      * property set to `true`.
      * the reason is, i found out if you don't add sortOrder to all column with
      * sorter set to true, the ones without sortOrder wouldn't function.
+     *
+     * 2024年10月1日 15点48分：
+     * this is for programmatically control sorting
      */
-    // eslint-disable-next-line prettier/prettier
-    .map<TableColumnType<FilmRecord>>((col: TableColumnType<FilmRecord>) => {
+    .map((col: TableColumnType<FilmRecord>) => {
       if (col.sorter) {
         col.sortOrder =
           currentSorter.value.columnKey === col.key
@@ -127,7 +145,7 @@ onMounted(() => runWithCurrent());
 
 async function queryData(params?: QueryParams) {
   const result = await axios.get<QueryResultFilm>(
-    'http://localhost:8000/film/',
+    "http://localhost:8000/film/",
     { params }
   );
   return result.data;
@@ -136,8 +154,8 @@ async function queryData(params?: QueryParams) {
 const { run, data, loading, total } = usePagination(queryData, {
   manual: true,
   pagination: {
-    pageSizeKey: 'limit',
-    totalKey: 'total',
+    pageSizeKey: "limit",
+    totalKey: "total",
   },
 });
 
@@ -146,7 +164,7 @@ const pagination = computed<TablePaginationConfig>(() => ({
   current: current.value,
   pageSize: pageSize.value,
   showTotal: (total: number, range: number[]) =>
-    `第 ${range[0]}-${range[1]} 条（共 ${total} 条）`,
+    `${range[0]}-${range[1]} (Total: ${total})`,
   showSizeChanger: true,
   showQuickJumper: true,
 }));
@@ -161,8 +179,8 @@ function runWithCurrent() {
   if (currentSorter.value.order) {
     params.sortField = currentSorter.value.field;
     params.sortOrder = new Map([
-      ['ascend', 1],
-      ['descend', 2],
+      ["ascend", 1],
+      ["descend", 2],
     ]).get(currentSorter.value.order);
   }
 
@@ -177,16 +195,25 @@ function runWithCurrent() {
 
   filterSearchTitle.value && (params.searchTitle = filterSearchTitle.value);
 
+  rentalRateMin.value && (params.rentalRateMin = rentalRateMin);
+  rentalRateMax.value && (params.rentalRateMax = rentalRateMax);
+
+  replacementCostMin.value && (params.replacementCostMin = replacementCostMin);
+  replacementCostMax.value && (params.replacementCostMax = replacementCostMax);
+
+  releaseYearMin.value && (params.releaseYearMin = releaseYearMin);
+  releaseYearMax.value && (params.releaseYearMax = releaseYearMax);
+
   run(params);
 }
 
-const onTableChange: TableProps<FilmRecord>['onChange'] = function (
+const onTableChange: TableProps<FilmRecord>["onChange"] = function (
   pagination: { pageSize?: number; current?: number },
   _filters,
   sorter
 ) {
   // console.log(pagination);
-  console.log(sorter);
+  // console.log(sorter);
 
   currentSorter.value = sorter as SorterResult<FilmRecord>;
   current.value = pagination.current!;
@@ -195,7 +222,7 @@ const onTableChange: TableProps<FilmRecord>['onChange'] = function (
   runWithCurrent();
 };
 
-function sort(order: SortOrder) {
+function programmaticalSort(order: SortOrder) {
   currentSorter.value.columnKey = sortColumn.value;
   currentSorter.value.field = sortColumn.value;
   currentSorter.value.order = order;
@@ -203,82 +230,109 @@ function sort(order: SortOrder) {
   runWithCurrent();
 }
 
-const sortColumn = ref('');
+const sortColumn = ref("");
 
 const filterLengthMin = ref();
 const filterLengthMax = ref();
 
-const mpaaRatingOptions: { value: MPAARating | ''; text: string }[] = [
-  { value: 'G', text: 'G' },
-  { value: 'PG', text: 'PG' },
-  { value: 'PG-13', text: 'PG-13' },
-  { value: 'R', text: 'R' },
-  { value: 'NC-17', text: 'NC-17' },
+const mpaaRatingOptions: { value: MPAARating | ""; text: string }[] = [
+  { value: "G", text: "G" },
+  { value: "PG", text: "PG" },
+  { value: "PG-13", text: "PG-13" },
+  { value: "R", text: "R" },
+  { value: "NC-17", text: "NC-17" },
 ];
-const filterRating = ref<MPAARating | ''>();
+const filterRating = ref<MPAARating | "">();
 
 const filterSearchTitle = ref<string>();
+
+const rentalRateMin = ref();
+const rentalRateMax = ref();
+
+const replacementCostMin = ref();
+const replacementCostMax = ref();
+
+const releaseYearMin = ref();
+const releaseYearMax = ref();
+
+function clearFilters() {
+  filterSearchTitle.value = "";
+  filterRating.value = "";
+  filterLengthMin.value = "";
+  filterLengthMax.value = "";
+  rentalRateMin.value = "";
+  rentalRateMax.value = "";
+  replacementCostMin.value = "";
+  replacementCostMax.value = "";
+  releaseYearMin.value = "";
+  releaseYearMax.value = "";
+
+  runWithCurrent();
+}
 </script>
 
 <template>
-  <a-input v-model:value="sortColumn"></a-input>
-  <AButton @click="sort('ascend')" :disabled="sortColumn === ''"
-    >ascend</AButton
-  >
-  <AButton @click="sort('descend')" :disabled="sortColumn === ''"
-    >descend</AButton
-  >
-  <a-button @click="console.log(sortColumn)">check</a-button>
-
-  <a-divider></a-divider>
-
-  <div style="display: flex; justify-content: center">
-    <a-row :gutter="[24, 24]" style="width: 80%">
-      <a-col :span="8">
-        <span class="filter-input-label">Length: </span>
-        <!-- vertical-align: middle somehow made the last span vertically align -->
-        <div style="width: 75%; display: inline-block; vertical-align: middle">
-          <a-input-group compact>
-            <a-input
-              v-model:value="filterLengthMin"
-              style="width: 40%"
-            ></a-input>
-            <a-input
-              placeholder="~"
-              disabled
-              style="pointer-events: none; text-align: center; width: 40px"
-            ></a-input>
-            <a-input
-              v-model:value="filterLengthMax"
-              style="width: 40%"
-            ></a-input>
-          </a-input-group>
-        </div>
-      </a-col>
-
-      <a-col :span="8">
+  <a-flex class="filters-container" vertical gap="8">
+    <a-flex class="filters-options-container" wrap="wrap" gap="16">
+      <a-flex class="filter-option">
+        <span class="filter-input-label no-shrink">Search Title: </span>
+        <a-input v-model:value="filterSearchTitle" />
+      </a-flex>
+      <a-flex class="filter-option">
         <span class="filter-input-label">Rating: </span>
-        <a-select v-model:value="filterRating" style="width: 70%" allow-clear>
-          <ASelectOption
+        <a-select v-model:value="filterRating" allow-clear style="flex-grow: 1">
+          <a-select-option
             v-for="o in mpaaRatingOptions"
-            :value="o.value"
             :key="o.value"
+            :value="o.value"
             >{{ o.text }}
-          </ASelectOption>
+          </a-select-option>
         </a-select>
-      </a-col>
+      </a-flex>
+      <a-flex class="filter-option">
+        <span class="filter-input-label">Length: </span>
+        <a-input-group compact style="display: flex">
+          <a-input v-model:value="filterLengthMin" />
+          <a-input
+            placeholder="~"
+            disabled
+            style="pointer-events: none; text-align: center; width: 2rem"
+            class="no-shrink"
+          />
+          <a-input v-model:value="filterLengthMax" />
+        </a-input-group>
+      </a-flex>
+      <a-flex class="filter-option">
+        <span class="filter-option-label no-shrink">Rental Rate:</span>
+        <InputNumberRange
+          v-model:min="rentalRateMin"
+          v-model:max="rentalRateMax"
+        />
+      </a-flex>
+      <a-flex class="filter-option">
+        <span class="filter-option-label no-shrink">Replacement Cost:</span>
+        <InputNumberRange
+          v-model:min="replacementCostMin"
+          v-model:max="replacementCostMax"
+        />
+      </a-flex>
+      <a-flex class="filter-option">
+        <span class="filter-option-label no-shrink">Release Year:</span>
+        <InputNumberRange
+          v-model:min="releaseYearMin"
+          v-model:max="releaseYearMax"
+        />
+      </a-flex>
+    </a-flex>
 
-      <a-col :span="8">
-        <span class="filter-input-label">Search Title: </span>
-        <a-input v-model:value="filterSearchTitle" style="width: 70%"></a-input>
-      </a-col>
-    </a-row>
-  </div>
-  <div style="display: flex; justify-content: center">
-    <a-row style="width: 80%; margin-top: 16px">
-      <a-button @click="runWithCurrent">refresh</a-button>
-    </a-row>
-  </div>
+    <a-flex class="filter-buttons-container" justify="end">
+      <a-space>
+        <a-button @click="runWithCurrent" type="primary">Refresh</a-button>
+        <a-button @click="clearFilters">Clear</a-button>
+      </a-space>
+    </a-flex>
+  </a-flex>
+
   <a-divider></a-divider>
 
   <a-table
@@ -291,9 +345,25 @@ const filterSearchTitle = ref<string>();
   >
     <template #bodyCell="{ column, record, value }">
       <template v-if="column.key === 'action'">
-        <span>
-          <a>delete</a>
-        </span>
+        <a-space>
+          <a style="color: darkgreen">Edit</a>
+          <a-popconfirm
+            ok-text="Yes"
+            cancel-text="Cancel"
+            @confirm="console.log"
+            @cancel="console.log"
+          >
+            <template #icon
+              ><QuestionCircleFilled style="color: red"
+            /></template>
+            <template #title>
+              <p>Are you sure to delete this film?</p>
+              <p>{{ `Title: ${record.title}` }}</p>
+              <p>{{ `ID: ${record.film_id}` }}</p>
+            </template>
+            <a :href="'#'" style="color: red">Delete</a>
+          </a-popconfirm>
+        </a-space>
       </template>
       <template v-else-if="column.key === 'title'">
         <router-link :to="`/film/${record.film_id}`">{{ value }}</router-link>
@@ -303,7 +373,19 @@ const filterSearchTitle = ref<string>();
 </template>
 
 <style scoped>
-span.filter-input-label {
+.filters-container {
+  margin-inline: 2rem;
+}
+
+.filter-option {
+  align-items: center;
+  gap: 0.5rem;
+  width: 20rem;
+  min-width: 12rem;
+}
+
+.filter-input-label,
+.filter-option-label {
   font-weight: bold;
 }
 </style>

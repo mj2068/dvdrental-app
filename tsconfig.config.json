@@ -10,7 +10,8 @@
     "composite": true,
     "types": ["node"],
 
+        // ***********************
     "moduleResolution": "Bundler",
-    "module": "ESNext"
+    "module": "ESNext",
   }
 }
