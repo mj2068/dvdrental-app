@@ -157,6 +157,11 @@ const { run, data, loading, total } = usePagination(queryData, {
     pageSizeKey: "limit",
     totalKey: "total",
   },
+  onSuccess(data) {
+    // this event handler deals with after filtering, total page might change,
+    // it uses server data to recalculate current page
+    current.value = Math.ceil(data.offset / data.limit) + 1;
+  },
 });
 
 const pagination = computed<TablePaginationConfig>(() => ({
@@ -348,6 +353,7 @@ function clearFilters() {
         <a-space>
           <a style="color: darkgreen">Edit</a>
           <a-popconfirm
+            placement="topRight"
             ok-text="Yes"
             cancel-text="Cancel"
             @confirm="console.log"

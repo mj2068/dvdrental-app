@@ -259,7 +259,7 @@ function onFilmTitleFilterSearch(value: string) {
      * and useful product title keyword filtering/suggestion api, and that list
      * is probably like billions long...
      */
-    const result = await axios.get<string[]>("/film_search", {
+    const result = await axios.get<string[]>("/film/film_search", {
       params: { title: value || null },
     });
     // console.log(result.data);
@@ -383,6 +383,7 @@ function clearOptions() {
         ></a-auto-complete>
       </a-flex>
     </a-flex>
+
     <a-flex class="filter-buttons" justify="end">
       <a-space>
         <a-button @click="runToRefresh" type="primary">Refresh</a-button>
@@ -405,7 +406,7 @@ function clearOptions() {
         showQuickJumper: true,
         showSizeChanger: true,
         showTotal: (total: number, range: number[]) =>
-            `${range[0]}-${range[1]}（Total: ${total}）`,
+            `${range[0]}-${range[1]} (Total: ${total})`,
         responsive: true,
         position: ['bottomCenter'],
     }"
@@ -460,12 +461,12 @@ function clearOptions() {
   margin-inline: 2rem;
 }
 
-.filter-input-label {
-  font-weight: bold;
-}
-
 .filter-option {
   align-items: center;
   gap: 0.5rem;
+}
+
+.filter-input-label {
+  font-weight: bold;
 }
 </style>

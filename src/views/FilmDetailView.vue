@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import axios from 'axios';
-import { useRequest } from 'vue-request';
-import type { ActorRecord } from './ActorListView.vue';
-import type { FilmRecord } from '@/types/records/film';
-import { UserOutlined } from '@ant-design/icons-vue';
+import axios from "axios";
+import { useRequest } from "vue-request";
+import type { ActorRecord } from "./ActorListView.vue";
+import type { FilmRecord } from "@/types/records/film";
+import { UserOutlined } from "@ant-design/icons-vue";
 
 /** ************ types ************ */
 interface QueryFilmDetailParams {}
