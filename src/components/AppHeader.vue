@@ -10,7 +10,7 @@ export default {
 
 <template>
   <header>
-    <h1>Rental Manager</h1>
+    <h1><router-link :to="{ name: 'home' }">Rental Manager</router-link></h1>
     <NavBar />
   </header>
 </template>

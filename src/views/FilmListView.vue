@@ -59,7 +59,7 @@ const columns = computed<TableColumnType<FilmRecord>[]>(() =>
         dataIndex: "description",
         title: "Description",
         ellipsis: true,
-        width: "12rem",
+        // width: "12rem",
       },
       {
         key: "release_year",
@@ -114,7 +114,7 @@ const columns = computed<TableColumnType<FilmRecord>[]>(() =>
       {
         key: "action",
         title: "Action",
-        width: "12rem",
+        // width: "12rem",
         align: "center",
       },
     ] as TableColumnsType<FilmRecord>
@@ -277,25 +277,29 @@ function clearFilters() {
 </script>
 
 <template>
+  <h2>Film List</h2>
+  <a-divider />
   <a-flex class="filters-container" vertical gap="8">
+    <a-flex justify="center"><h3>Filter options:</h3></a-flex>
     <a-flex class="filters-options-container" wrap="wrap" gap="16">
       <a-flex class="filter-option">
-        <span class="filter-input-label no-shrink">Search Title: </span>
+        <span class="filter-input-label no-shrink">Search Title:</span>
         <a-input v-model:value="filterSearchTitle" />
       </a-flex>
       <a-flex class="filter-option">
-        <span class="filter-input-label">Rating: </span>
+        <span class="filter-input-label">Rating:</span>
         <a-select v-model:value="filterRating" allow-clear style="flex-grow: 1">
           <a-select-option
             v-for="o in mpaaRatingOptions"
             :key="o.value"
             :value="o.value"
-            >{{ o.text }}
+          >
+            {{ o.text }}
           </a-select-option>
         </a-select>
       </a-flex>
       <a-flex class="filter-option">
-        <span class="filter-input-label">Length: </span>
+        <span class="filter-input-label">Length:</span>
         <a-input-group compact style="display: flex">
           <a-input v-model:value="filterLengthMin" />
           <a-input
@@ -359,9 +363,9 @@ function clearFilters() {
             @confirm="console.log"
             @cancel="console.log"
           >
-            <template #icon
-              ><QuestionCircleFilled style="color: red"
-            /></template>
+            <template #icon>
+              <QuestionCircleFilled style="color: red" />
+            </template>
             <template #title>
               <p>Are you sure to delete this film?</p>
               <p>{{ `Title: ${record.title}` }}</p>
