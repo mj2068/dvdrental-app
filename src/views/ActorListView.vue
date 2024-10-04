@@ -106,7 +106,7 @@ const { run, data, current, pageSize, total } = usePagination(queryActor, {
 const onTableChange: TableProps<ActorRecord>["onChange"] = function (
   pagination: { current?: number; pageSize?: number },
   _filters,
-  sorter
+  sorter,
 ) {
   // changePagination(pagination.current!, pagination.pageSize!);
 
@@ -174,7 +174,7 @@ function onActorNameFilterSearch(value: string) {
 
 const onActorNameFilterSelect: AutoCompleteProps["onSelect"] = function (
   _value: string | number | LabeledValue,
-  option: DefaultOptionType
+  option: DefaultOptionType,
 ) {
   // once a value is selected, make the options list only has selected one
   actorNameSearchResult.value = [option];
@@ -240,8 +240,8 @@ const filmCountMax = ref();
             placement="topRight"
             ok-text="Yes"
             cancel-text="Cancel"
-            @confirm="console.log"
-            @cancel="console.log"
+            @confirm="(_e) => {}"
+            @cancel="(_e) => {}"
           >
             <template #icon>
               <question-circle-two-tone two-tone-color="red" />

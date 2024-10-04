@@ -20,7 +20,7 @@ const route = useRoute();
 async function queryActor(params: QueryActorDetailParams) {
   const result = await axios.get<QueryActorDetailResult>(
     `/actor/${route.params.actorId}`,
-    { params }
+    { params },
   );
 
   return result.data;
@@ -30,7 +30,7 @@ watch(
   () => data.value?.full_name,
   (newV) => {
     document.title = newV + " - " + document.title;
-  }
+  },
 );
 </script>
 

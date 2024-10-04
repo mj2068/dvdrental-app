@@ -30,7 +30,7 @@ watch(
   () => data.value?.title,
   (newV) => {
     document.title = newV + " - " + document.title;
-  }
+  },
 );
 
 const minWidthMedia = matchMedia("(min-width: 768px)");

@@ -136,7 +136,7 @@ const columns = computed<TableColumnType<FilmRecord>[]>(() =>
             : undefined;
       }
       return col;
-    })
+    }),
 );
 
 const route = useRoute();
@@ -146,7 +146,7 @@ onMounted(() => runWithCurrent());
 async function queryData(params?: QueryParams) {
   const result = await axios.get<QueryResultFilm>(
     "http://localhost:8000/film/",
-    { params }
+    { params },
   );
   return result.data;
 }
@@ -215,7 +215,7 @@ function runWithCurrent() {
 const onTableChange: TableProps<FilmRecord>["onChange"] = function (
   pagination: { pageSize?: number; current?: number },
   _filters,
-  sorter
+  sorter,
 ) {
   // console.log(pagination);
   // console.log(sorter);
@@ -360,8 +360,8 @@ function clearFilters() {
             placement="topRight"
             ok-text="Yes"
             cancel-text="Cancel"
-            @confirm="console.log"
-            @cancel="console.log"
+            @confirm="(_e) => {}"
+            @cancel="(_e) => {}"
           >
             <template #icon>
               <QuestionCircleFilled style="color: red" />

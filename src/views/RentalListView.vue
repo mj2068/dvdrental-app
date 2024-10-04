@@ -17,6 +17,7 @@ import type { StaffRecord } from "@/types/records/staff";
 import type { RentalRecord } from "@/types/records/rental";
 import type { PaymentRecord } from "@/types/records/payment";
 import type { RadioGroupChildOption } from "ant-design-vue/es/radio/Group";
+import { QuestionCircleFilled } from "@ant-design/icons-vue";
 
 interface RentalsQueryParams {
   customerId?: number;
@@ -52,8 +53,9 @@ const columns: TableColumnType<RentalRecord>[] = [
   {
     key: "id",
     dataIndex: "id",
-    title: "Rental ID",
+    title: "ID",
     sorter: { multiple: 1 },
+    width: "6rem",
   },
   {
     key: "customer_full_name",
@@ -73,6 +75,8 @@ const columns: TableColumnType<RentalRecord>[] = [
     dataIndex: "inventory_id",
     title: "Inventory ID",
     sorter: { multiple: 2 },
+    width: "8rem",
+    align: "center",
   },
   {
     key: "rental_date",
@@ -98,8 +102,16 @@ const columns: TableColumnType<RentalRecord>[] = [
     dataIndex: ["inventory", "store_id"],
     title: "Store ID",
     sorter: { multiple: 6 },
+    width: "6rem",
+    align: "center",
   },
-  { key: "staff_name", title: "Staff" },
+  { key: "staff_name", title: "Staff", width: "8rem", align: "center" },
+  {
+    key: "action",
+    title: "Action",
+    // width: "12rem",
+    align: "center",
+  },
 ];
 
 onMounted(function () {
@@ -149,7 +161,7 @@ const sorts = ref<string[]>([]);
 const onTableChange: TableProps<RentalRecord>["onChange"] = function (
   pagination: { pageSize?: number; current?: number },
   _filters,
-  sorter
+  sorter,
 ) {
   if (import.meta.env.DEV) console.log(pagination);
 
@@ -158,7 +170,7 @@ const onTableChange: TableProps<RentalRecord>["onChange"] = function (
     if (!Array.isArray(sorter)) {
       if (sorter.column) {
         sorts.value.push(
-          `${sorter.columnKey},${sorter.order === "ascend" ? "0" : "1"}`
+          `${sorter.columnKey},${sorter.order === "ascend" ? "0" : "1"}`,
         );
       } else {
         sorts.value = [];
@@ -226,7 +238,7 @@ const staffsFilterOptions = computed<SelectProps["options"]>(() =>
   staffsRequest.data.value?.data.map((staff) => ({
     label: `${staff.first_name} ${staff.last_name}`,
     value: staff.id,
-  }))
+  })),
 );
 const staffsFilterValue = ref<number>();
 function filterOptionsByLabel(input: string, option: any) {
@@ -277,7 +289,7 @@ function onFilmTitleFilterSearch(value: string) {
 
 const onFilmTitleFilterSelect: AutoCompleteProps["onSelect"] = function (
   _value: string | number | LabeledValue,
-  option: DefaultOptionType
+  option: DefaultOptionType,
 ) {
   // once a value is selected, make the options list only has selected one
   filmTitleFilterOptions.value = [option];
@@ -294,10 +306,13 @@ function clearOptions() {
 </script>
 
 <template>
+  <h2>Rental List</h2>
+  <a-divider />
   <a-flex class="filters-container" vertical gap="8">
+    <a-flex justify="center"><h3>Filter options:</h3></a-flex>
     <a-flex class="filter-options-container" wrap="wrap" gap="16">
       <a-flex class="filter-option">
-        <span class="filter-input-label">Rental Date: </span>
+        <span class="filter-input-label">Rental Date:</span>
         <div>
           <a-range-picker
             v-model:value="rentalDateRange"
@@ -319,7 +334,7 @@ function clearOptions() {
         </div>
       </a-flex>
       <a-flex class="filter-option">
-        <span class="filter-input-label">Return Date: </span>
+        <span class="filter-input-label">Return Date:</span>
         <div>
           <a-range-picker
             v-model:value="returnDateRange"
@@ -344,25 +359,26 @@ function clearOptions() {
         </div>
       </a-flex>
       <a-flex class="filter-option">
-        <span class="filter-input-label">Return Status: </span>
+        <span class="filter-input-label">Return Status:</span>
         <a-radio-group v-model:value="isReturned">
           <a-radio
             v-for="(option, index) in isReturnedFilterOptions"
             :key="index"
             :value="option.value"
-            >{{ option.label }}</a-radio
           >
+            {{ option.label }}
+          </a-radio>
         </a-radio-group>
       </a-flex>
       <a-flex class="filter-option">
-        <span class="filter-input-label">Payment Status: </span>
+        <span class="filter-input-label">Payment Status:</span>
         <a-radio-group
           v-model:value="isPaid"
           :options="isPaidFilterOptions"
         ></a-radio-group>
       </a-flex>
       <a-flex class="filter-option">
-        <span class="filter-input-label">Staff: </span>
+        <span class="filter-input-label">Staff:</span>
         <a-select
           :options="staffsFilterOptions"
           v-model:value="staffsFilterValue"
@@ -373,7 +389,7 @@ function clearOptions() {
         ></a-select>
       </a-flex>
       <a-flex class="filter-option">
-        <span class="filter-input-label">Film Title: </span>
+        <span class="filter-input-label">Film Title:</span>
         <a-auto-complete
           :options="filmTitleFilterOptions"
           v-model:value="filmTitleFilterValue"
@@ -400,19 +416,52 @@ function clearOptions() {
     :data-source="data?.data"
     :loading="loading"
     :pagination="{
-        current,
-        pageSize,
-        total,
-        showQuickJumper: true,
-        showSizeChanger: true,
-        showTotal: (total: number, range: number[]) =>
-            `${range[0]}-${range[1]} (Total: ${total})`,
-        responsive: true,
-        position: ['bottomCenter'],
+      current,
+      pageSize,
+      total,
+      showQuickJumper: true,
+      showSizeChanger: true,
+      showTotal: (total: number, range: number[]) =>
+        `${range[0]}-${range[1]} (Total: ${total})`,
+      responsive: true,
+      position: ['bottomCenter'],
     }"
     v-on:change="onTableChange"
   >
     <template #bodyCell="{ column, record }">
+      <template v-if="column.key === 'action'">
+        <a-space>
+          <a style="color: darkgreen">Edit</a>
+          <a-popconfirm
+            placement="topRight"
+            ok-text="Yes"
+            cancel-text="Cancel"
+            @confirm="(_e) => {}"
+            @cancel="(_e) => {}"
+          >
+            <template #icon>
+              <QuestionCircleFilled style="color: red" />
+            </template>
+            <template #title>
+              <p>Are you sure to delete this rental record?</p>
+              <p>
+                {{
+                  `Customer: ${record.customer.first_name} ${
+                    record.customer.last_name
+                  }, ${`ID: ${record.id}`}`
+                }}
+              </p>
+              <p>on</p>
+              <p>
+                {{
+                  `Film: ${record.inventory.film.title}, ID: ${record.inventory.film.film_id}`
+                }}
+              </p>
+            </template>
+            <a :href="'#'" style="color: red">Delete</a>
+          </a-popconfirm>
+        </a-space>
+      </template>
       <template v-if="column.key === 'id'">
         <IDLink :to="`/rental/${record.id}`">{{ record.id }}</IDLink>
       </template>
@@ -440,13 +489,13 @@ function clearOptions() {
         <template v-if="0 === record.payments.length">
           <span style="color: darkred">UNPAID</span>
         </template>
-        <template v-else-if="1 === record.payments.length">{{
-          record.payments[0].amount.toFixed(2)
-        }}</template>
+        <template v-else-if="1 === record.payments.length">
+          {{ record.payments[0].amount.toFixed(2) }}
+        </template>
         <template v-else>
           {{
             sumArrayToFixed(
-              record.payments.map((payment: PaymentRecord) => payment.amount)
+              record.payments.map((payment: PaymentRecord) => payment.amount),
             )
           }}
           <a-tag color="geekblue">{{ record.payments.length }}</a-tag>
