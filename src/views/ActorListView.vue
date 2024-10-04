@@ -185,7 +185,10 @@ const filmCountMax = ref();
 </script>
 
 <template>
+  <h2>Actor/Actress List</h2>
+  <a-divider />
   <a-flex class="filters-container" vertical gap="8">
+    <a-flex justify="center"><h3>Filter options:</h3></a-flex>
     <a-flex class="filter-options-container" wrap="wrap" gap="16">
       <a-flex class="filter-option">
         <span class="filter-input-label">Search Name:</span>
@@ -253,9 +256,9 @@ const filmCountMax = ref();
         </a-space>
       </template>
       <template v-else-if="column.key === 'first_name'">
-        <router-link :to="`/actor/${record.actor_id}`"
-          >{{ record.first_name }} {{ record.last_name }}</router-link
-        >
+        <router-link :to="`/actor/${record.actor_id}`">
+          {{ record.first_name }} {{ record.last_name }}
+        </router-link>
       </template>
     </template>
   </a-table>
