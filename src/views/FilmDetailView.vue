@@ -19,19 +19,17 @@ const props = defineProps<{
 }>();
 
 async function getFilmDetail(params: QueryFilmDetailParams) {
-  const result = await axios.get<FilmDetailRecord>(
-    `http://localhost:8000/film/${props.id}`,
-    { params }
-  );
+  const result = await axios.get<FilmDetailRecord>(`/film/${props.id}`, {
+    params,
+  });
   return result.data;
 }
 
-const { data } = useRequest(getFilmDetail);
+const { data, loading } = useRequest(getFilmDetail);
 watch(
   () => data.value?.title,
-  (v) => {
-    console.log(v);
-    document.title = v + " - " + document.title;
+  (newV) => {
+    document.title = newV + " - " + document.title;
   }
 );
 
@@ -53,7 +51,22 @@ onUnmounted(() => {
 
 <template>
   <h2>Film Detail</h2>
+  <a-flex
+    v-if="loading"
+    align="center"
+    justify="center"
+    style="
+      margin-top: 4rem;
+      min-height: 300px;
+      background-color: rgba(220 220 220 / 0.1);
+      border-radius: 8px;
+      border: 1px solid rgba(200 200 200 / 0.3);
+    "
+  >
+    <a-spin />
+  </a-flex>
   <a-descriptions
+    v-else
     :title="data?.title"
     :bordered="true"
     :column="vpSize ? 2 : 1"
