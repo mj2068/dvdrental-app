@@ -53,10 +53,10 @@ a-descriptions(
   bordered,
   :label-style="{ width: '8rem' }"
 )
-  template(#title).
-    {{ data?.customer?.full_name }} - {{ data?.inventory?.film.title }} (ID: {{ data?.id }})
   template(#extra)
     a-button(type="primary") Edit
+  template(#title).
+    {{ data?.customer?.full_name }} - {{ data?.inventory?.film.title }} (ID: {{ data?.id }})
   a-descriptions-item(label="Customer")
     IDLink(v-if="data", :to="`/customer/${data?.customer?.id}`") {{ data?.customer?.full_name }}
   a-descriptions-item(label="Staff") {{ data?.staff?.full_name }}
