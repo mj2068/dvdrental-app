@@ -13,7 +13,9 @@ app.use(createPinia());
 app.use(router);
 app.use(Antd);
 
-axios.defaults.baseURL = "http://localhost:8000";
+axios.defaults.baseURL = import.meta.env.DEV
+  ? "http://localhost:8000"
+  : "http://api.zizaimai.space";
 axios.defaults.paramsSerializer = { indexes: null };
 
 app.mount("#app");

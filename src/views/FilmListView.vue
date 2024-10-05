@@ -144,10 +144,7 @@ const route = useRoute();
 onMounted(() => runWithCurrent());
 
 async function queryData(params?: QueryParams) {
-  const result = await axios.get<QueryResultFilm>(
-    "http://localhost:8000/film/",
-    { params },
-  );
+  const result = await axios.get<QueryResultFilm>("/film", { params });
   return result.data;
 }
 
