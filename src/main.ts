@@ -15,7 +15,7 @@ app.use(Antd);
 
 axios.defaults.baseURL = import.meta.env.DEV
   ? "http://localhost:8000"
-  : "http://api.zizaimai.space";
+  : "https://zizaimai.space/api";
 axios.defaults.paramsSerializer = { indexes: null };
 
 app.mount("#app");
