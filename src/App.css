@@ -1,5 +1,9 @@
 #app {
-  margin-inline: 0.5rem;
+  /* margin-inline: 0.5rem; */
+}
+
+h2 {
+  padding-inline-start: 0.5rem;
 }
 
 .no-shrink {

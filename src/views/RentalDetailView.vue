@@ -56,15 +56,15 @@ a-descriptions(
   template(#extra)
     a-button(type="primary") Edit
   template(#title).
-    {{ data?.customer?.full_name }} - {{ data?.inventory?.film.title }} (ID: {{ data?.id }})
+    Rental by {{ data?.customer?.full_name }} on film {{ data?.inventory?.film.title }}
+  a-descriptions-item(label="Rental ID") {{ data?.id }}
   a-descriptions-item(label="Customer")
     IDLink(v-if="data", :to="`/customer/${data?.customer?.id}`") {{ data?.customer?.full_name }}
+  a-descriptions-item(label="Film Title")
+    IDLink(v-if="data", :to="`/film/${data?.inventory?.film_id}`") {{ data?.inventory?.film.title }}
   a-descriptions-item(label="Staff") {{ data?.staff?.full_name }}
   a-descriptions-item(label="Inventory ID") {{ data?.inventory?.id }}
   a-descriptions-item(label="Store ID") {{ data?.inventory?.store_id }}
-  a-descriptions-item(label="Film ID")
-    IDLink(v-if="data", :to="`/film/${data?.inventory?.film_id}`") {{ data?.inventory?.film_id }}
-  a-descriptions-item(label="Film Title") {{ data?.inventory?.film.title }}
   a-descriptions-item(label="Rental Date") {{ data?.rental_date }}
   a-descriptions-item(label="Return Date") {{ data?.return_date ?? "NOT RETURNED" }}
   a-descriptions-item(label="Payments", :span="isVPWide ? 2 : 1")

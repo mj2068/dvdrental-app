@@ -6,7 +6,9 @@ import AppHeader from "./components/AppHeader.vue";
 
 <template>
   <AppHeader />
-  <RouterView />
+  <main style="margin-inline: 0.5rem">
+    <RouterView />
+  </main>
   <AppFooter />
 </template>
 
