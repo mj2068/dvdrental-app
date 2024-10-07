@@ -5,13 +5,15 @@ import AppHeader from "./components/AppHeader.vue";
 </script>
 
 <template>
-  <AppHeader />
-  <main style="margin-inline: 0.5rem">
-    <RouterView />
-  </main>
+  <div>
+    <AppHeader />
+    <main style="margin-inline: 0.5rem">
+      <RouterView />
+    </main>
+  </div>
   <AppFooter />
 </template>
 
 <style scoped></style>
 
-<style src="/src/App.css" />
+<style src="@/App.css" />

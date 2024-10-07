@@ -40,13 +40,13 @@ const router = createRouter({
       name: "actor",
       component: ActorListView,
 
-      meta: { routeTitle: "Actor List" },
+      meta: { routeTitle: "Actor / Actress List" },
     },
     {
       path: "/actor/:actorId(\\d+)",
       name: "actorDetail",
       component: ActorDetailView,
-      meta: { routeTitle: "Actor/Actress" },
+      meta: { routeTitle: "Actor / Actress" },
     },
     {
       path: "/rental",

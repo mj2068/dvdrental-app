@@ -1,5 +1,9 @@
 #app {
   /* margin-inline: 0.5rem; */
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 h2 {
@@ -8,4 +12,9 @@ h2 {
 
 .no-shrink {
   flex-shrink: 0;
+}
+
+.gray-text,
+.grey-text {
+  color: grey;
 }

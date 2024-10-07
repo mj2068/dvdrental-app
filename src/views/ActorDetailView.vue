@@ -35,7 +35,7 @@ watch(
 </script>
 
 <template>
-  <h2>Actor/Actress Detail</h2>
+  <h2>Actor / Actress Detail</h2>
   <a-flex
     v-if="loading"
     align="center"

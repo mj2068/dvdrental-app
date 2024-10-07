@@ -1,5 +1,7 @@
+<script setup lang="ts"></script>
+
 <template>
-  <h1>dvdrental</h1>
+  <h1>Home</h1>
 </template>
 
-<script setup lang="ts"></script>
+<style lang="scss" scoped></style>
