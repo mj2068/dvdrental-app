@@ -4,7 +4,7 @@ import { useRequest } from "vue-request";
 import type { ActorRecord } from "./ActorListView.vue";
 import type { FilmRecord } from "@/types/records/film";
 import { UserOutlined } from "@ant-design/icons-vue";
-import { onMounted, onUnmounted, ref, watch } from "vue";
+import useGlobalStore from "@/stores/global";
 
 /** ************ types ************ */
 interface QueryFilmDetailParams {}
@@ -33,20 +33,8 @@ watch(
   },
 );
 
-const minWidthMedia = matchMedia("(min-width: 768px)");
-const vpSize = ref(minWidthMedia.matches);
-
-function onMinWidthMediaChange(this: MediaQueryList, e: MediaQueryListEvent) {
-  vpSize.value = e.matches;
-}
-
-onMounted(() => {
-  minWidthMedia.addEventListener("change", onMinWidthMediaChange);
-});
-
-onUnmounted(() => {
-  minWidthMedia.removeEventListener("change", onMinWidthMediaChange);
-});
+const globalStore = useGlobalStore();
+const computedColumn = computed(() => (globalStore.isMinWidth768Px ? 2 : 1));
 </script>
 
 <template>
@@ -69,14 +57,14 @@ onUnmounted(() => {
     v-else
     :title="data?.title"
     :bordered="true"
-    :column="vpSize ? 2 : 1"
+    :column="computedColumn"
   >
     <template #extra>
       <a-button type="primary">Edit</a-button>
     </template>
     <a-descriptions-item
       label="Image"
-      :span="vpSize ? 2 : 1"
+      :span="computedColumn"
       :label-style="{ width: '8rem' }"
     >
       <a-flex vertical gap="8" align="center">
@@ -84,10 +72,10 @@ onUnmounted(() => {
         <a-button size="small">Change</a-button>
       </a-flex>
     </a-descriptions-item>
-    <a-descriptions-item label="Description" :span="vpSize ? 2 : 1">
+    <a-descriptions-item label="Description" :span="computedColumn">
       {{ data?.description }}
     </a-descriptions-item>
-    <a-descriptions-item label="Cast" :span="vpSize ? 2 : 1">
+    <a-descriptions-item label="Cast" :span="computedColumn">
       <a-flex gap="16" wrap="wrap">
         <span v-for="member in data?.cast" :key="member.actor_id">
           <router-link :to="`/actor/${member.actor_id}`">
@@ -130,7 +118,7 @@ onUnmounted(() => {
         </template>
       </a-space>
     </a-descriptions-item>
-    <a-descriptions-item label="Keywords" :span="vpSize ? 2 : 1">
+    <a-descriptions-item label="Keywords" :span="computedColumn">
       <a-flex gap="8" wrap="wrap">
         <a-tag
           v-for="(item, index) in data?.fulltext.split(' ').map((s) => {

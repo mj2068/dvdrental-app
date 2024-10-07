@@ -1,6 +1,8 @@
 <script>
 export default {
-  props: [],
+  props: {
+    showNavBar: { default: true },
+  },
   data: () => ({}),
   setup: () => {
     return {};
@@ -21,11 +23,11 @@ export default {
     >
       <h1 style="margin-block: 0">
         <router-link :to="{ name: 'home' }" style="color: darkblue">
-          Rental Manager
+          Rental Manager (Demo)
         </router-link>
       </h1>
     </a-flex>
-    <NavBar />
+    <NavBar v-if="showNavBar" />
   </header>
 </template>
 

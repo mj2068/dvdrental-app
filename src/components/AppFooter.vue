@@ -1,31 +1,33 @@
 <script setup lang="ts">
 import wechatQr from "@/assets/wechat_qr.png";
+import useGlobalStore from "@/stores/global";
+
 // const wechatQr = new URL("@/assets/wechat_qr.png", import.meta.url).href;
+
+const globalStore = useGlobalStore();
 </script>
 
 <template lang="pug">
 footer(
-  style="margin-top: 6rem; padding-top: 4rem; padding-bottom: 4px; background-color: lightgray"
+  :style="{ 'margin-top': '6rem', 'padding-top': '4rem', 'padding-bottom': '4px', 'background-color': globalStore.isMinWidth768Px ? 'lightgray' : 'red' }"
 )
+  p {{ globalStore.isMinWidth768Px }}
   a-flex(vertical, align="center")
+    p.gray-text 示例项目，仅作展示
     div(style="padding: 2px; background-color: white; border-radius: 4px")
       a-image(:src="wechatQr", style="width: 96px")
     span 邮箱：
-      a.gray-text(href="mailto:yuelianghushenfu@sina.com") yuelianghushenfu@sina.com
+      a.gray-text(href="mailto:yuelianghushenfu@sina.com").
+        yuelianghushenfu@sina.com
     span(style="margin-block: 0.5rem")
-      a.gray-text(href="https://zizaimai.space/demo", target="_blank") zizaimai.space
+      a.gray-text(href="https://zizaimai.space/demo", target="_blank").
+        zizaimai.space
     span
-      a.gray-text(href="http://beian.miit.gov.cn/", target="_blank") 鲁ICP备2022041953号-1
+      a.gray-text(href="http://beian.miit.gov.cn/", target="_blank").
+        鲁ICP备2022041953号-1
 </template>
 
 <!-- <template> -->
 <!--   <a-divider></a-divider> -->
 <!--   <a-image :src="wechatQrImageUrl" style="width: 96px"></a-image> -->
 <!-- </template> -->
-
-<style lang="scss" scoped>
-.gray-text,
-.grey-text {
-  color: grey;
-}
-</style>

@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref, watch } from "vue";
 import axios from "axios";
 import { useRoute } from "vue-router";
 import { useRequest } from "vue-request";
+import useGlobalStore from "@/stores/global";
 
 import type { TableColumnType } from "ant-design-vue";
 import type { CustomerRecord } from "@/types/records/customer";
@@ -23,6 +23,7 @@ async function requestCustomer() {
   return result.data.data;
 }
 const { run, data, loading } = useRequest(requestCustomer, { manual: true });
+onMounted(() => run());
 watch(
   () => data.value?.full_name,
   (newV) => {
@@ -80,21 +81,8 @@ const paymentsTableColumns: TableColumnType<PaymentRecord>[] = [
   { key: "amount", dataIndex: "amount", title: "Amount", align: "right" },
 ];
 
-const minWidthMedia = matchMedia("(min-width: 768px)");
-const vpSize = ref(minWidthMedia.matches);
-
-function onMinWidthMediaChange(this: MediaQueryList, e: MediaQueryListEvent) {
-  vpSize.value = e.matches;
-}
-
-onMounted(() => {
-  run();
-  minWidthMedia.addEventListener("change", onMinWidthMediaChange);
-});
-
-onUnmounted(() => {
-  minWidthMedia.removeEventListener("change", onMinWidthMediaChange);
-});
+const globalStore = useGlobalStore();
+const computedColumn = computed(() => (globalStore.isMinWidth768Px ? 2 : 1));
 </script>
 
 <template>
@@ -117,7 +105,7 @@ onUnmounted(() => {
   <a-descriptions
     v-else
     :title="data?.full_name"
-    :column="vpSize ? 2 : 1"
+    :column="computedColumn"
     bordered
     :label-style="{ width: '8rem' }"
   >

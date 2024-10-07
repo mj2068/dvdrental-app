@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import type { RentalRecord } from "@/types/records/rental";
 import axios from "axios";
-import { onMounted, onUnmounted, ref } from "vue";
 import { useRequest } from "vue-request";
 import { useRoute } from "vue-router";
+import useGlobalStore from "@/stores/global";
 
 const route = useRoute();
 
@@ -19,23 +19,11 @@ async function requestRental() {
   return result.data.data;
 }
 const { run, data, loading } = useRequest(requestRental, { manual: true });
+onMounted(() => run());
 document.title = "Rental Detail" + " - " + document.title;
 
-const minWidthMedia = matchMedia("(min-width: 768px)");
-const isVPWide = ref(minWidthMedia.matches);
-
-function onMinWidthMediaChange(this: MediaQueryList, e: MediaQueryListEvent) {
-  isVPWide.value = e.matches;
-}
-
-onMounted(function () {
-  run();
-  minWidthMedia.addEventListener("change", onMinWidthMediaChange);
-});
-
-onUnmounted(() => {
-  minWidthMedia.removeEventListener("change", onMinWidthMediaChange);
-});
+const globalStore = useGlobalStore();
+const computedColumn = computed(() => (globalStore.isMinWidth768Px ? 2 : 1));
 </script>
 
 <template lang="pug">
@@ -49,7 +37,7 @@ a-flex(
   a-spin
 a-descriptions(
   v-else,
-  :column="isVPWide ? 2 : 1",
+  :column="computedColumn",
   bordered,
   :label-style="{ width: '8rem' }"
 )
@@ -67,7 +55,7 @@ a-descriptions(
   a-descriptions-item(label="Store ID") {{ data?.inventory?.store_id }}
   a-descriptions-item(label="Rental Date") {{ data?.rental_date }}
   a-descriptions-item(label="Return Date") {{ data?.return_date ?? "NOT RETURNED" }}
-  a-descriptions-item(label="Payments", :span="isVPWide ? 2 : 1")
+  a-descriptions-item(label="Payments", :span="computedColumn")
     a-list(:data-source="data?.payments") 
       template(#header)
         a-row(

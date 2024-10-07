@@ -9,8 +9,11 @@ import axios from "axios";
 
 const app = createApp(App);
 
-app.use(createPinia());
+const pinia = createPinia();
+app.use(pinia);
+
 app.use(router);
+
 app.use(Antd);
 
 axios.defaults.baseURL = import.meta.env.DEV
