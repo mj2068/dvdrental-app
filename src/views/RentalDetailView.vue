@@ -80,5 +80,3 @@ a-descriptions(
           a-col(:span="24", style="text-align: right")
             span(style="font-weight: bold") Total: {{ data?.payments.reduce((p, c) => p + c.amount, 0).toFixed(2) }}
 </template>
-
-<style scoped lang="scss"></style>

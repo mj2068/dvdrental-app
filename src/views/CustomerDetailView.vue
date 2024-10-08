@@ -104,11 +104,11 @@ const computedColumn = computed(() => (globalStore.isMinWidth768Px ? 2 : 1));
 
   <a-descriptions
     v-else
-    :title="data?.full_name"
     :column="computedColumn"
     bordered
     :label-style="{ width: '8rem' }"
   >
+    <template #title>{{ data?.full_name }}</template>
     <template v-slot:extra>
       <a-button type="primary">Edit</a-button>
     </template>
@@ -137,7 +137,7 @@ const computedColumn = computed(() => (globalStore.isMinWidth768Px ? 2 : 1));
     <a-descriptions-item label="Address2">
       {{ data?.address?.address2 }}
     </a-descriptions-item>
-    <a-descriptions-item label="Rentals" :span="2">
+    <a-descriptions-item label="Rentals" :span="computedColumn">
       <a-table
         size="middle"
         :data-source="data?.rentals!"
@@ -173,7 +173,7 @@ const computedColumn = computed(() => (globalStore.isMinWidth768Px ? 2 : 1));
         </template>
       </a-table>
     </a-descriptions-item>
-    <a-descriptions-item label="Payments">
+    <a-descriptions-item label="Payments" :span="computedColumn">
       <a-table
         size="middle"
         :data-source="data?.payments!"

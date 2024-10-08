@@ -1,17 +1,13 @@
 <script setup lang="ts">
 import wechatQr from "@/assets/wechat_qr.png";
-import useGlobalStore from "@/stores/global";
 
 // const wechatQr = new URL("@/assets/wechat_qr.png", import.meta.url).href;
-
-const globalStore = useGlobalStore();
 </script>
 
 <template lang="pug">
 footer(
-  :style="{ 'margin-top': '6rem', 'padding-top': '4rem', 'padding-bottom': '4px', 'background-color': globalStore.isMinWidth768Px ? 'lightgray' : 'red' }"
+  :style="{ 'margin-top': '6rem', 'padding-top': '4rem', 'padding-bottom': '4px', 'background-color': 'lightgray' }"
 )
-  p {{ globalStore.isMinWidth768Px }}
   a-flex(vertical, align="center")
     p.gray-text 示例项目，仅作展示
     div(style="padding: 2px; background-color: white; border-radius: 4px")

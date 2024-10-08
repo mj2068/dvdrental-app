@@ -58,6 +58,7 @@ const computedColumn = computed(() => (globalStore.isMinWidth768Px ? 2 : 1));
     :title="data?.title"
     :bordered="true"
     :column="computedColumn"
+    :label-style="{ width: '8rem' }"
   >
     <template #extra>
       <a-button type="primary">Edit</a-button>
@@ -87,28 +88,24 @@ const computedColumn = computed(() => (globalStore.isMinWidth768Px ? 2 : 1));
         </span>
       </a-flex>
     </a-descriptions-item>
-    <a-descriptions-item label="Release Year" :span="1">
+    <a-descriptions-item label="Release Year">
       {{ data?.release_year }}
     </a-descriptions-item>
-    <a-descriptions-item
-      label="Categories"
-      :span="1"
-      :label-style="{ width: '8rem' }"
-    >
+    <a-descriptions-item label="Categories">
       <template v-for="category in data?.categories">
         {{ category.name }}
       </template>
     </a-descriptions-item>
-    <a-descriptions-item label="Length" :span="1">
+    <a-descriptions-item label="Length">
       {{ data?.length }}min
     </a-descriptions-item>
-    <a-descriptions-item label="Language" :span="1">
+    <a-descriptions-item label="Language">
       {{ data?.language.name }}
     </a-descriptions-item>
-    <a-descriptions-item label="Rating" :span="1">
+    <a-descriptions-item label="Rating">
       {{ data?.rating }}
     </a-descriptions-item>
-    <a-descriptions-item label="Special Features" :span="1">
+    <a-descriptions-item label="Special Features">
       <a-space>
         <template #split>
           <a-divider type="vertical" />

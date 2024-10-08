@@ -115,8 +115,6 @@ const columns: TableColumnType<RentalRecord>[] = [
 ];
 
 onMounted(function () {
-  if (import.meta.env.DEV) console.log("RentalListView - onMounted");
-
   // get staffs for the filter form
   staffsRequest.run();
 });
@@ -163,8 +161,6 @@ const onTableChange: TableProps<RentalRecord>["onChange"] = function (
   _filters,
   sorter,
 ) {
-  if (import.meta.env.DEV) console.log(pagination);
-
   if (sorter) {
     sorts.value = [];
     if (!Array.isArray(sorter)) {
