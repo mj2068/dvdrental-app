@@ -188,7 +188,7 @@ const filmCountMax = ref();
   <h2>Actor / Actress List</h2>
   <a-divider />
   <a-flex class="filters-container" vertical gap="8">
-    <a-flex justify="center"><h3>Filter options:</h3></a-flex>
+    <a-flex justify="center"><h3 class="gray-text">Filter options:</h3></a-flex>
     <a-flex class="filter-options-container" wrap="wrap" gap="16">
       <a-flex class="filter-option">
         <span class="filter-input-label">Search Name:</span>

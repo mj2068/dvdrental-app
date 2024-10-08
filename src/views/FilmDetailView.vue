@@ -66,7 +66,6 @@ const computedColumn = computed(() => (globalStore.isMinWidth768Px ? 2 : 1));
     <a-descriptions-item
       label="Image"
       :span="computedColumn"
-      :label-style="{ width: '8rem' }"
     >
       <a-flex vertical gap="8" align="center">
         <a-skeleton-image />

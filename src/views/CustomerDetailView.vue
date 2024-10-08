@@ -199,5 +199,3 @@ const computedColumn = computed(() => (globalStore.isMinWidth768Px ? 2 : 1));
     </a-descriptions-item>
   </a-descriptions>
 </template>
-
-<style lang="scss" scoped></style>
