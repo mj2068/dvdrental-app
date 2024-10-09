@@ -39,10 +39,13 @@ declare module 'vue' {
     BulletList: typeof import('./src/components/ListSpaceBetween.vue')['default']
     IDLink: typeof import('./src/components/IDLink.vue')['default']
     InputNumberRange: typeof import('./src/components/InputNumberRange.vue')['default']
+    LineChart: typeof import('./src/components/LineChart.vue')['default']
     ListCenter: typeof import('./src/components/ListCenter.vue')['default']
     ListSpaceBetween: typeof import('./src/components/ListSpaceBetween.vue')['default']
     NavBar: typeof import('./src/components/NavBar.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    ScrollingBoard: typeof import('./src/components/ScrollingBoard.vue')['default']
+    TestComp: typeof import('./src/components/TestComp.vue')['default']
   }
 }

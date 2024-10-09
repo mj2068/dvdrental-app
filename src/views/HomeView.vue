@@ -29,6 +29,15 @@ interface DailyPaymentsResponseItem {
   total_amount: number;
 }
 
+interface RecentRentalsResponseItem {
+  rental_id: number;
+  rental_date: string;
+  customer_id: number;
+  customer_name: string;
+  film_id: number;
+  film_title: string;
+}
+
 const globalStore = useGlobalStore();
 
 async function getOverview() {
@@ -39,9 +48,7 @@ const {
   data: overviewData,
   loading: overviewLoading,
   run: runOverview,
-} = useRequest<OverviewResponse>(getOverview, {
-  manual: true,
-});
+} = useRequest<OverviewResponse>(getOverview, { manual: true });
 const overviewItems = computed<ListItem[]>(() => {
   if (!overviewData.value) return [];
   return [
@@ -96,11 +103,7 @@ const topFilmsItems = computed<ListItem[]>(() => {
 async function getDailyRentals() {
   const result = await axios.get<DailyRentalsResponseItem[]>(
     "/stats/daily-rentals",
-    {
-      params: {
-        start_date: "2005-1-1",
-      },
-    },
+    { params: { start_date: "2005-1-1" } },
   );
   return result.data;
 }
@@ -113,11 +116,7 @@ const {
 async function getDailyPayments() {
   const result = await axios.get<DailyPaymentsResponseItem[]>(
     "/stats/daily-payments",
-    {
-      params: {
-        start_date: "2005-1-1",
-      },
-    },
+    { params: { start_date: "2005-1-1" } },
   );
   return result.data;
 }
@@ -127,47 +126,198 @@ const {
   run: runDailyPayments,
 } = useRequest(getDailyPayments, { manual: true });
 
+async function getRecentRentals() {
+  const result = await axios.get<RecentRentalsResponseItem[]>(
+    "/stats/recent-rentals",
+    { params: { limit: 10 } },
+  );
+  return result.data;
+}
+const {
+  data: recentRentalsData,
+  loading: recentRentalsLoading,
+  run: runRecentRentals,
+} = useRequest(getRecentRentals, { manual: true });
+
 onMounted(() => {
   runOverview();
   runTopFilms();
   runDailyRentals();
   runDailyPayments();
+  runRecentRentals();
 });
 </script>
 
 <template>
-  <a-flex vertical align="center">
-    <a-space style="font-size: 1.1rem; font-weight: 600">
-      <template #split>
-        <a-divider type="vertical" />
-      </template>
+  <a-flex>
+    <a-space direction="vertical" style="width: 200px">
       <RouterLink to="/film">Film List</RouterLink>
       <RouterLink to="/actor">Actor / Actress List</RouterLink>
       <RouterLink to="/rental">Rental List</RouterLink>
     </a-space>
 
     <div class="layout">
-      <a-flex justify="center">
-        <h2>
-          {{ dailyRentalsData?.[dailyRentalsData.length - 1].rental_count }}
-        </h2>
-      </a-flex>
-      <a-flex justify="center">
-        <h2>
-          {{ dailyPaymentsData?.[dailyPaymentsData.length - 1].total_amount }}
-        </h2>
-      </a-flex>
-      <a-flex justify="center">
+      <div
+        style="
+          font-size: 1.5rem;
+          font-weight: 600;
+          grid-column: 1/5;
+          height: auto;
+        "
+        class="card"
+      >
+        Dashboard
+      </div>
+      <div style="display: grid" class="card card-color-1 daily-info-container">
+        <a-flex
+          vertical
+          align="center"
+          justify="center"
+          style="border-bottom: 1px solid #ccc; position: relative"
+        >
+          <p
+            style="
+              margin-bottom: 0;
+              width: 100%;
+              position: absolute;
+              left: 0;
+              top: 0;
+            "
+            class="gray-text"
+          >
+            Daily Rentals
+          </p>
+          <a-flex align="center" style="flex-grow: 1">
+            <p style="font-size: 2.5rem; font-weight: 600; margin-bottom: 0">
+              {{ dailyRentalsData?.[dailyRentalsData.length - 1].rental_count }}
+            </p>
+          </a-flex>
+        </a-flex>
+        <a-flex
+          vertical
+          align="center"
+          justify="center"
+          style="position: relative"
+        >
+          <p
+            class="gray-text"
+            style="
+              margin-bottom: 0;
+              width: 100%;
+              position: absolute;
+              top: 4px;
+              left: 0;
+            "
+          >
+            Daily Payments
+          </p>
+          <a-flex align="center" style="flex-grow: 1">
+            <p style="font-size: 2.5rem; font-weight: 600; margin-bottom: 0">
+              {{
+                dailyPaymentsData?.[dailyPaymentsData.length - 1].total_amount
+              }}
+            </p>
+          </a-flex>
+        </a-flex>
+      </div>
+
+      <a-flex justify="center" class="card card-color-2 overview-container">
         <ListSpaceBetween :items="overviewItems" title="Overview" />
       </a-flex>
-      <a-flex justify="center">
-        <ListSpaceBetween :items="topFilmsItems" title="Top Film Rentals">
+
+      <a-flex justify="center" class="card card-color-3 top-rentals-container">
+        <ListSpaceBetween :items="topFilmsItems" title="Top Rentals">
           <template #label="{ item }">
             <router-link :to="`/film/${item.key}`">
               {{ item.label }}
             </router-link>
           </template>
         </ListSpaceBetween>
+      </a-flex>
+      <a-flex justify="center" class="card card-color-4 recent-rentals-container">
+        <ScrollingBoard
+          :texts="recentRentalsData?.map(() => '') ?? []"
+          title="Recent Rentals"
+        >
+          <template #item="{ index }">
+            <span>
+              <router-link
+                :to="`/customer/${recentRentalsData?.[index].customer_id}`"
+              >
+                {{ recentRentalsData?.[index].customer_name }}
+              </router-link>
+              <router-link
+                :to="`/rental/${recentRentalsData?.[index].rental_id}`"
+              >
+                rented
+              </router-link>
+              <router-link :to="`/film/${recentRentalsData?.[index].film_id}`">
+                {{ recentRentalsData?.[index].film_title }}
+              </router-link>
+            </span>
+          </template>
+        </ScrollingBoard>
+      </a-flex>
+
+      <a-flex
+        vertical
+        class="card card-color-5"
+        style="grid-column: 1 / 3; min-height: 300px"
+      >
+        <p
+          style="
+            font-size: 1rem;
+            font-weight: 600;
+            text-align: center;
+            width: 100%;
+            margin-bottom: 0;
+          "
+        >
+          Payments History
+        </p>
+        <LineChart
+          v-if="dailyPaymentsData"
+          :data="
+            dailyPaymentsData?.map((item) => ({
+              date: item.date,
+              value: item.total_amount,
+            })) ?? []
+          "
+          color="rgba(75, 192, 75, 1)"
+          bgColor="rgba(75, 192, 75, 0.2)"
+        />
+        <a-flex v-else justify="center" align="center" style="height: 100%">
+          <a-spin />
+        </a-flex>
+      </a-flex>
+      <a-flex
+        vertical
+        class="card card-color-6"
+        style="grid-column: 3 / 5; min-height: 300px"
+      >
+        <p
+          style="
+            font-size: 1rem;
+            font-weight: 600;
+            text-align: center;
+            width: 100%;
+            margin-bottom: 0;
+          "
+        >
+          Rentals History
+        </p>
+        <LineChart
+          v-if="dailyRentalsData"
+          :data="
+            dailyRentalsData?.map((item) => ({
+              date: item.date,
+              value: item.rental_count,
+            })) ?? []
+          "
+        />
+        <a-flex v-else justify="center" align="center" style="height: 100%">
+          <a-spin />
+        </a-flex>
       </a-flex>
     </div>
   </a-flex>
@@ -176,10 +326,23 @@ onMounted(() => {
 <style lang="css" scoped>
 .layout {
   display: grid;
-  grid-template-columns: v-bind(
-    'globalStore.isMinWidth768Px ? "1fr 1fr" : "1fr 1fr"'
-  );
-  width: 100%;
+  grid-template-columns: repeat(4, minmax(250px, 1fr));
   grid-gap: 1rem;
+  margin: 0 auto;
+  width: 100%;
 }
+
+.card {
+  border-radius: 4px;
+  padding: 16px;
+  height: 240px;
+}
+
+/* Diverse warm color classes with 0.2 transparency */
+.card-color-1 { background-color: rgba(255, 87, 34, 0.05); }  /* Deep Orange */
+.card-color-2 { background-color: rgba(255, 193, 7, 0.05); }  /* Amber */
+.card-color-3 { background-color: rgba(233, 30, 99, 0.05); }  /* Pink */
+.card-color-4 { background-color: rgba(156, 39, 176, 0.05); } /* Purple */
+.card-color-5 { background-color: rgba(0, 150, 136, 0.05); }  /* Teal */
+.card-color-6 { background-color: rgba(76, 175, 80, 0.05); }  /* Green */
 </style>
