@@ -2,6 +2,11 @@
 import useGlobalStore from "@/stores/global";
 import { useRequest } from "vue-request";
 import axios from "axios";
+import IconMonitorDashboard from "~icons/mdi/monitor-dashboard";
+import IconStar from "~icons/mdi/star";
+import IconSortVariant from "~icons/mdi/sort-variant";
+import IconEmoticonPlus from "~icons/mdi/emoticon-plus";
+import IconChartLine from "~icons/mdi/chart-line";
 
 import type { ListItem } from "@/components/ListSpaceBetween.vue";
 
@@ -153,188 +158,193 @@ onMounted(() => {
     <a-space
       direction="vertical"
       size="middle"
-      style="width: 200px; font-weight: bold; padding-top: 1.5rem"
+      style="
+        min-width: 200px;
+        font-weight: bold;
+        padding-top: 1.5rem;
+        font-size: 1.05rem;
+      "
+      class="sidebar-container"
     >
       <RouterLink to="/film">Film List</RouterLink>
       <RouterLink to="/actor">Actor / Actress List</RouterLink>
       <RouterLink to="/rental">Rental List</RouterLink>
     </a-space>
 
-    <div class="layout">
-      <div
-        style="
-          font-size: 1.5rem;
-          font-weight: 600;
-          grid-column: 1/5;
-          height: auto;
-        "
-        class="card"
+    <a-flex vertical class="flex-grow">
+      <a-flex
+        style="font-size: 1.5rem; font-weight: 600; margin-bottom: 0.5rem"
+        gap="small"
       >
+        <IconMonitorDashboard />
         Dashboard
-      </div>
-      <div style="display: grid" class="card card-color-1 daily-info-container">
-        <a-flex
-          vertical
-          align="center"
-          justify="center"
-          style="border-bottom: 1px solid #ccc; position: relative"
+      </a-flex>
+      <div class="layout">
+        <div
+          style="display: grid"
+          class="card card-color-1 daily-info-container"
         >
-          <p
-            style="
-              margin-bottom: 0;
-              width: 100%;
-              position: absolute;
-              left: 0;
-              top: 0;
-            "
-            class="gray-text"
+          <a-flex
+            vertical
+            align="center"
+            justify="center"
+            style="border-bottom: 1px solid #ccc; position: relative"
           >
-            Daily Rentals
-          </p>
-          <a-flex align="center" style="flex-grow: 1">
-            <p style="font-size: 2.5rem; font-weight: 600; margin-bottom: 0">
-              {{ dailyRentalsData?.[dailyRentalsData.length - 1].rental_count }}
+            <p
+              style="
+                margin-bottom: 0;
+                width: 100%;
+                position: absolute;
+                left: 0;
+                top: 0;
+              "
+              class="gray-text"
+            >
+              Daily Rentals
             </p>
+            <a-flex align="center" style="flex-grow: 1">
+              <p style="font-size: 2.5rem; font-weight: 600; margin-bottom: 0">
+                {{
+                  dailyRentalsData?.[dailyRentalsData.length - 1].rental_count
+                }}
+              </p>
+            </a-flex>
+          </a-flex>
+          <a-flex
+            vertical
+            align="center"
+            justify="center"
+            style="position: relative"
+          >
+            <p
+              class="gray-text"
+              style="
+                margin-bottom: 0;
+                width: 100%;
+                position: absolute;
+                top: 4px;
+                left: 0;
+              "
+            >
+              Daily Payments
+            </p>
+            <a-flex align="center" style="flex-grow: 1">
+              <p style="font-size: 2.5rem; font-weight: 600; margin-bottom: 0">
+                {{
+                  dailyPaymentsData?.[dailyPaymentsData.length - 1].total_amount
+                }}
+              </p>
+            </a-flex>
+          </a-flex>
+        </div>
+
+        <a-flex justify="center" class="card card-color-2 overview-container">
+          <ListSpaceBetween :items="overviewItems" title="Overview">
+            <template #icon><IconSortVariant /></template>
+          </ListSpaceBetween>
+        </a-flex>
+
+        <a-flex
+          justify="center"
+          class="card card-color-3 top-rentals-container"
+        >
+          <ListSpaceBetween :items="topFilmsItems" title="Top Rentals">
+            <template #label="{ item }">
+              <router-link :to="`/film/${item.key}`">
+                {{ item.label }}
+              </router-link>
+            </template>
+            <template #icon><IconStar /></template>
+          </ListSpaceBetween>
+        </a-flex>
+        <a-flex
+          justify="center"
+          class="card card-color-4 recent-rentals-container"
+        >
+          <ScrollingBoard
+            :texts="recentRentalsData?.map(() => '') ?? []"
+            title="Recent Rentals"
+          >
+            <template #icon><IconEmoticonPlus /></template>
+            <template #item="{ index }">
+              <span>
+                <router-link
+                  :to="`/customer/${recentRentalsData?.[index].customer_id}`"
+                >
+                  {{ recentRentalsData?.[index].customer_name }}
+                </router-link>
+                <router-link
+                  :to="`/rental/${recentRentalsData?.[index].rental_id}`"
+                >
+                  rented
+                </router-link>
+                <router-link
+                  :to="`/film/${recentRentalsData?.[index].film_id}`"
+                >
+                  {{ recentRentalsData?.[index].film_title }}
+                </router-link>
+              </span>
+            </template>
+          </ScrollingBoard>
+        </a-flex>
+
+        <a-flex vertical class="card card-color-5 chart-container">
+          <a-flex
+            class="chart-title"
+            gap="small"
+            align="center"
+            justify="center"
+          >
+            <IconChartLine />
+            Payments History
+          </a-flex>
+          <LineChart
+            v-if="dailyPaymentsData"
+            :data="
+              dailyPaymentsData?.map((item) => ({
+                date: item.date,
+                value: item.total_amount,
+              })) ?? []
+            "
+            color="rgba(75, 192, 75, 1)"
+            bgColor="rgba(75, 192, 75, 0.2)"
+          />
+          <a-flex v-else justify="center" align="center" class="flex-grow">
+            <a-spin />
           </a-flex>
         </a-flex>
-        <a-flex
-          vertical
-          align="center"
-          justify="center"
-          style="position: relative"
-        >
-          <p
-            class="gray-text"
-            style="
-              margin-bottom: 0;
-              width: 100%;
-              position: absolute;
-              top: 4px;
-              left: 0;
-            "
+        <a-flex vertical class="card card-color-6 chart-container">
+          <a-flex
+            class="chart-title"
+            gap="small"
+            align="center"
+            justify="center"
           >
-            Daily Payments
-          </p>
-          <a-flex align="center" style="flex-grow: 1">
-            <p style="font-size: 2.5rem; font-weight: 600; margin-bottom: 0">
-              {{
-                dailyPaymentsData?.[dailyPaymentsData.length - 1].total_amount
-              }}
-            </p>
+            <IconChartLine />
+            Rentals History
+          </a-flex>
+          <LineChart
+            v-if="dailyRentalsData"
+            :data="
+              dailyRentalsData?.map((item) => ({
+                date: item.date,
+                value: item.rental_count,
+              })) ?? []
+            "
+          />
+          <a-flex v-else justify="center" align="center" class="flex-grow">
+            <a-spin />
           </a-flex>
         </a-flex>
       </div>
-
-      <a-flex justify="center" class="card card-color-2 overview-container">
-        <ListSpaceBetween :items="overviewItems" title="Overview" />
-      </a-flex>
-
-      <a-flex justify="center" class="card card-color-3 top-rentals-container">
-        <ListSpaceBetween :items="topFilmsItems" title="Top Rentals">
-          <template #label="{ item }">
-            <router-link :to="`/film/${item.key}`">
-              {{ item.label }}
-            </router-link>
-          </template>
-        </ListSpaceBetween>
-      </a-flex>
-      <a-flex
-        justify="center"
-        class="card card-color-4 recent-rentals-container"
-      >
-        <ScrollingBoard
-          :texts="recentRentalsData?.map(() => '') ?? []"
-          title="Recent Rentals"
-        >
-          <template #item="{ index }">
-            <span>
-              <router-link
-                :to="`/customer/${recentRentalsData?.[index].customer_id}`"
-              >
-                {{ recentRentalsData?.[index].customer_name }}
-              </router-link>
-              <router-link
-                :to="`/rental/${recentRentalsData?.[index].rental_id}`"
-              >
-                rented
-              </router-link>
-              <router-link :to="`/film/${recentRentalsData?.[index].film_id}`">
-                {{ recentRentalsData?.[index].film_title }}
-              </router-link>
-            </span>
-          </template>
-        </ScrollingBoard>
-      </a-flex>
-
-      <a-flex
-        vertical
-        class="card card-color-5"
-        style="grid-column: 1 / 3; height: 300px"
-      >
-        <p
-          style="
-            font-size: 1rem;
-            font-weight: 600;
-            text-align: center;
-            width: 100%;
-            margin-bottom: 0;
-          "
-        >
-          Payments History
-        </p>
-        <LineChart
-          v-if="dailyPaymentsData"
-          :data="
-            dailyPaymentsData?.map((item) => ({
-              date: item.date,
-              value: item.total_amount,
-            })) ?? []
-          "
-          color="rgba(75, 192, 75, 1)"
-          bgColor="rgba(75, 192, 75, 0.2)"
-        />
-        <a-flex v-else justify="center" align="center" style="height: 100%">
-          <a-spin />
-        </a-flex>
-      </a-flex>
-      <a-flex
-        vertical
-        class="card card-color-6"
-        style="grid-column: 3 / 5; height: 300px"
-      >
-        <p
-          style="
-            font-size: 1rem;
-            font-weight: 600;
-            text-align: center;
-            width: 100%;
-            margin-bottom: 0;
-          "
-        >
-          Rentals History
-        </p>
-        <LineChart
-          v-if="dailyRentalsData"
-          :data="
-            dailyRentalsData?.map((item) => ({
-              date: item.date,
-              value: item.rental_count,
-            })) ?? []
-          "
-        />
-        <a-flex v-else justify="center" align="center" style="flex-grow: 1">
-          <a-spin />
-        </a-flex>
-      </a-flex>
-    </div>
-    <!-- layout -->
+    </a-flex>
   </a-flex>
 </template>
 
 <style lang="css" scoped>
 .layout {
   display: grid;
-  grid-template-columns: repeat(4, minmax(250px, 1fr));
+  grid-template-columns: repeat(4, minmax(200px, 1fr));
   grid-gap: 1rem;
   margin: 0 auto;
   width: 100%;
@@ -365,4 +375,21 @@ onMounted(() => {
 .card-color-6 {
   background-color: rgba(76, 175, 80, 0.05);
 } /* Green */
+
+.chart-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  text-align: center;
+  width: 100%;
+  margin-bottom: 0;
+}
+
+.chart-container {
+  height: 350px;
+  grid-column: span 2;
+}
+
+.flex-grow {
+  flex-grow: 1;
+}
 </style>

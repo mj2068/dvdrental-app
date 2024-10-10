@@ -14,9 +14,9 @@
     },
 
     // ******************************
-    "allowJs": true
+    "allowJs": true,
+    "types": ["unplugin-icons/types/vue"]
   },
-
   "references": [
     {
       "path": "./tsconfig.config.json"

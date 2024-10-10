@@ -1,6 +1,8 @@
 #app {
   /* margin-inline: 0.5rem; */
   min-height: 100vh;
+  max-width: 90rem;
+  margin-inline: auto;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -17,4 +19,8 @@ h2 {
 .gray-text,
 .grey-text {
   color: grey;
+}
+
+.small-text {
+  font-size: 0.8rem;
 }

@@ -7,13 +7,16 @@ export interface ListItem {
 
 const props = defineProps<{
   items: ListItem[];
-  title: string;
+  title?: string;
 }>();
 </script>
 
 <template>
   <a-flex class="aligned-list" vertical align="center">
-    <span class="title">{{ props.title }}</span>
+    <a-flex class="title" gap="small" align="center">
+      <slot name="icon"></slot>
+      {{ props.title }}
+    </a-flex>
     <ul style="width: 100%; padding: 0; margin-bottom: 0">
       <li v-for="item in props.items" :key="item.key" class="list-item">
         <span class="label">

@@ -1,6 +1,9 @@
 <template>
   <a-flex vertical align="center" class="container">
-    <span v-if="title" class="title">{{ title }}</span>
+    <a-flex class="title" gap="small" align="center" justify="center">
+      <slot name="icon"></slot>
+      {{ title }}
+    </a-flex>
     <div class="marquee-container">
       <a-flex vertical gap="16" class="marquee">
         <a-flex v-for="i in 2" :key="i" vertical gap="16">
@@ -39,8 +42,7 @@ withDefaults(
   font-size: 1.5rem;
   font-weight: 600;
   width: 100%;
-  text-align: center;
-  box-shadow: 0px 4px 4px -4px #bbb;
+  box-shadow: 0px 6px 4px -4px #bbb;
   padding-bottom: 0.5rem;
   z-index: 0;
 }

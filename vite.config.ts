@@ -4,6 +4,7 @@ import { fileURLToPath } from "url";
 import Components from "unplugin-vue-components/vite";
 import { AntDesignVueResolver } from "unplugin-vue-components/resolvers";
 import AutoImport from "unplugin-auto-import/vite";
+import Icons from "unplugin-icons/vite";
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -19,6 +20,7 @@ export default defineConfig({
     AutoImport({
       imports: ["vue", "vue-router", "pinia"],
     }),
+    Icons({ compiler: "vue3" }),
   ],
   resolve: {
     alias: {
