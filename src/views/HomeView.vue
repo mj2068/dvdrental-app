@@ -358,22 +358,22 @@ onMounted(() => {
 
 /* Diverse warm color classes with 0.2 transparency */
 .card-color-1 {
-  background-color: rgba(34, 174, 255, 0.1);
+  background-color: rgba(34, 174, 255, 0.07);
 } /* Deep Orange */
 .card-color-2 {
-  background-color: rgba(255, 193, 7, 0.1);
+  background-color: rgba(255, 7, 201, 0.07);
 } /* Amber */
 .card-color-3 {
-  background-color: rgba(233, 30, 99, 0.1);
+  background-color: rgba(233, 30, 57, 0.07);
 } /* Pink */
 .card-color-4 {
-  background-color: rgba(52, 228, 17, 0.1);
+  background-color: rgba(228, 154, 17, 0.07);
 } /* Purple */
 .card-color-5 {
-  background-color: rgba(150, 140, 0, 0.1);
+  background-color: rgba(47, 150, 0, 0.07);
 } /* Teal */
 .card-color-6 {
-  background-color: rgba(76, 175, 80, 0.1);
+  background-color: rgba(76, 111, 175, 0.07);
 } /* Green */
 
 .chart-title {
