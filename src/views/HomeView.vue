@@ -150,7 +150,11 @@ onMounted(() => {
 
 <template>
   <a-flex>
-    <a-space direction="vertical" style="width: 200px">
+    <a-space
+      direction="vertical"
+      size="middle"
+      style="width: 200px; font-weight: bold; padding-top: 1.5rem"
+    >
       <RouterLink to="/film">Film List</RouterLink>
       <RouterLink to="/actor">Actor / Actress List</RouterLink>
       <RouterLink to="/rental">Rental List</RouterLink>
@@ -234,7 +238,10 @@ onMounted(() => {
           </template>
         </ListSpaceBetween>
       </a-flex>
-      <a-flex justify="center" class="card card-color-4 recent-rentals-container">
+      <a-flex
+        justify="center"
+        class="card card-color-4 recent-rentals-container"
+      >
         <ScrollingBoard
           :texts="recentRentalsData?.map(() => '') ?? []"
           title="Recent Rentals"
@@ -262,7 +269,7 @@ onMounted(() => {
       <a-flex
         vertical
         class="card card-color-5"
-        style="grid-column: 1 / 3; min-height: 300px"
+        style="grid-column: 1 / 3; height: 300px"
       >
         <p
           style="
@@ -293,7 +300,7 @@ onMounted(() => {
       <a-flex
         vertical
         class="card card-color-6"
-        style="grid-column: 3 / 5; min-height: 300px"
+        style="grid-column: 3 / 5; height: 300px"
       >
         <p
           style="
@@ -315,11 +322,12 @@ onMounted(() => {
             })) ?? []
           "
         />
-        <a-flex v-else justify="center" align="center" style="height: 100%">
+        <a-flex v-else justify="center" align="center" style="flex-grow: 1">
           <a-spin />
         </a-flex>
       </a-flex>
     </div>
+    <!-- layout -->
   </a-flex>
 </template>
 
@@ -339,10 +347,22 @@ onMounted(() => {
 }
 
 /* Diverse warm color classes with 0.2 transparency */
-.card-color-1 { background-color: rgba(255, 87, 34, 0.05); }  /* Deep Orange */
-.card-color-2 { background-color: rgba(255, 193, 7, 0.05); }  /* Amber */
-.card-color-3 { background-color: rgba(233, 30, 99, 0.05); }  /* Pink */
-.card-color-4 { background-color: rgba(156, 39, 176, 0.05); } /* Purple */
-.card-color-5 { background-color: rgba(0, 150, 136, 0.05); }  /* Teal */
-.card-color-6 { background-color: rgba(76, 175, 80, 0.05); }  /* Green */
+.card-color-1 {
+  background-color: rgba(255, 87, 34, 0.05);
+} /* Deep Orange */
+.card-color-2 {
+  background-color: rgba(255, 193, 7, 0.05);
+} /* Amber */
+.card-color-3 {
+  background-color: rgba(233, 30, 99, 0.05);
+} /* Pink */
+.card-color-4 {
+  background-color: rgba(156, 39, 176, 0.05);
+} /* Purple */
+.card-color-5 {
+  background-color: rgba(0, 150, 136, 0.05);
+} /* Teal */
+.card-color-6 {
+  background-color: rgba(76, 175, 80, 0.05);
+} /* Green */
 </style>

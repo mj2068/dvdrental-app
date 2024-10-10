@@ -1,5 +1,5 @@
 <template>
-  <a-flex vertical justify="center" align="center" class="container">
+  <a-flex vertical align="center" class="container">
     <span v-if="title" class="title">{{ title }}</span>
     <div class="marquee-container">
       <a-flex vertical gap="16" class="marquee">
@@ -41,6 +41,7 @@ withDefaults(
   width: 100%;
   text-align: center;
   box-shadow: 0px 4px 4px -4px #bbb;
+  padding-bottom: 0.5rem;
   z-index: 0;
 }
 

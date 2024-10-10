@@ -1,5 +1,7 @@
 <template>
-  <a-flex><canvas ref="lineChart"></canvas></a-flex>
+  <a-flex style="flex-grow: 1">
+    <canvas ref="lineChart"></canvas>
+  </a-flex>
 </template>
 
 <script setup lang="ts">
@@ -22,7 +24,7 @@ onMounted(() => {
 
   // Extract labels and data from the props
   const labels = props.data.map((item) => item.date);
-  const amounts = props.data.map((item) => item.value);
+  const values = props.data.map((item) => item.value);
 
   // Create the chart
   new Chart(ctx!, {
@@ -32,7 +34,7 @@ onMounted(() => {
       datasets: [
         {
           label: "Total Amount",
-          data: amounts,
+          data: values,
           borderColor: props.color || "rgba(75, 192, 192, 1)", // Use the color prop or default
           backgroundColor: props.bgColor || "rgba(75, 192, 192, 0.2)", // Semi-transparent background
           fill: true,
@@ -53,14 +55,26 @@ onMounted(() => {
           ticks: {
             autoSkip: true, // Automatically skip labels
             maxTicksLimit: 10, // Maximum number of ticks
-            // Alternatively, you can use a callback to customize labels
-            // callback: function(value, index, values) {
-            //   return index % 2 === 0 ? value : ''; // Show every second label
-            // }
+            maxRotation: 0,
+            callback: function (value, index, ticks) {
+              // Get the actual date string from the labels array
+              const dateString = labels[index];
+              // Assuming the date is in ISO format (e.g., "2023-05-15")
+              const date = new Date(dateString);
+              const month = (date.getMonth() + 1).toString().padStart(2, "0");
+              const day = date.getDate().toString().padStart(2, "0");
+              return `${month}/${day}`;
+            },
+          },
+          grid: {
+            display: false,
           },
         },
         y: {
           beginAtZero: true,
+          grid: {
+            display: false,
+          },
         },
       },
     },
@@ -68,9 +82,4 @@ onMounted(() => {
 });
 </script>
 
-<style scoped>
-canvas {
-  width: 100%;
-  height: 100%;
-}
-</style>
+<style scoped></style>
