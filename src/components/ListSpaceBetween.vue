@@ -17,15 +17,17 @@ const props = defineProps<{
       <slot name="icon"></slot>
       {{ props.title }}
     </a-flex>
-    <ul style="width: 100%; padding: 0; margin-bottom: 0">
-      <li v-for="item in props.items" :key="item.key" class="list-item">
-        <span class="label">
-          <slot name="label" :item="item">{{ item.label }}</slot>
-        </span>
-        <span class="separator" style="min-width: 1rem"></span>
-        <span class="content">{{ item.content }}</span>
-      </li>
-    </ul>
+    <a-flex vertical justify="center" style="flex-grow: 1; width: 100%">
+      <ul style="width: 100%; padding: 0; margin-bottom: 0">
+        <li v-for="item in props.items" :key="item.key" class="list-item">
+          <span class="label">
+            <slot name="label" :item="item">{{ item.label }}</slot>
+          </span>
+          <span class="separator" style="min-width: 1rem"></span>
+          <span class="content">{{ item.content }}</span>
+        </li>
+      </ul>
+    </a-flex>
   </a-flex>
 </template>
 

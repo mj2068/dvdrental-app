@@ -1,18 +1,20 @@
 <script setup lang="ts">
 import wechatQr from "@/assets/wechat_qr.png";
+import IconEmail from "~icons/mdi/email";
 
 // const wechatQr = new URL("@/assets/wechat_qr.png", import.meta.url).href;
 </script>
 
 <template lang="pug">
 footer(
-  :style="{ 'margin-top': '6rem', 'padding-top': '4rem', 'padding-bottom': '4px', 'background-color': 'lightgray' }"
+  :style="{ 'margin-top': '16rem', 'padding-top': '4rem', 'padding-bottom': '4px', 'background-color': 'lightgray' }"
 )
   a-flex(vertical, align="center")
     p.gray-text 示例项目，仅作页面功能性展示。来源数据库为模拟数据，不完全保证数据逻辑准确性。
     div(style="padding: 2px; background-color: white; border-radius: 4px")
       a-image(:src="wechatQr", style="width: 96px")
-    span 邮箱：
+    a-flex.gray-text(align="center" gap="2")
+      IconEmail
       a.gray-text(href="mailto:yuelianghushenfu@sina.com").
         yuelianghushenfu@sina.com
     span(style="margin-block: 0.5rem")

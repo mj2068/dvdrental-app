@@ -1,46 +1,75 @@
-# .
 
-This template should help get you started developing with Vue 3 in Vite.
+这是我使用Vue.js配合Ant Design Vue UI组件库开发的一个对rentaldvd这个postgresql样板数据库进行查看示例的项目。
 
-## Recommended IDE Setup
+实现的路由页面包含：
+- 首页
+- 影片列表
+- 影片详情
+- 演员列表
+- 演员详情
+- 租赁列表
+- 租赁详情
+- 客户详情
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
+![首页截图](images/home_demo.jpg "首页截图")
+![影片列表截图](images/film_list_screenshot.jpg "影片列表截图")
 
-## Type Support for `.vue` Imports in TS
+以下内容增减修改于Cursor AI claude-3.5-sonnet生成内容。
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin) to make the TypeScript language service aware of `.vue` types.
+The following is adpted upon generated content by Cursor AI claude-3.5-sonnet
+# DVD Rental Manager
 
-If the standalone TypeScript plugin doesn't feel fast enough to you, Volar has also implemented a [Take Over Mode](https://github.com/johnsoncodehk/volar/discussions/471#discussioncomment-1361669) that is more performant. You can enable it by the following steps:
+A Vue 3 application for managing a DVD rental business, featuring film, actor, customer, and rental management.
 
-1. Disable the built-in TypeScript Extension
-    1) Run `Extensions: Show Built-in Extensions` from VSCode's command palette
-    2) Find `TypeScript and JavaScript Language Features`, right click and select `Disable (Workspace)`
-2. Reload the VSCode window by running `Developer: Reload Window` from the command palette.
+## Features
 
-## Customize configuration
+- Dashboard with statistics and charts
+- Film, actor, customer, and rental management
+- Responsive design
 
-See [Vite Configuration Reference](https://vitejs.dev/config/).
+## Tech Used
 
-## Project Setup
+- Vue 3, TypeScript, Vite
+- Pinia, Vue Router
+- Ant Design Vue, Chart.js
+- Axios, Dayjs
 
-```sh
-npm install
-```
+## Setup
 
-### Compile and Hot-Reload for Development
+1. Clone the repository
+2. Install dependencies: `npm install`
+3. Run development server: `npm run dev`
 
-```sh
-npm run dev
-```
+## Project Structure
 
-### Type-Check, Compile and Minify for Production
+- `src/`: Source files (components, views, stores, router, types)
+- `public/`: Static assets
 
-```sh
-npm run build
-```
+## API Configuration
 
-### Lint with [ESLint](https://eslint.org/)
+API base URL is set in `src/main.ts`.
 
-```sh
-npm run lint
-```
+## Responsive Design
+
+Managed by the global store in `src/stores/global.ts`.
+
+## Key Components
+
+- AppHeader, AppFooter
+- ListSpaceBetween, ScrollingBoard
+- LineChart
+
+## Main Views
+
+- HomeView, FilmListView, FilmDetailView
+- ActorListView, ActorDetailView
+- RentalListView, RentalDetailView
+- CustomerDetailView
+
+## Styling
+
+Uses Ant Design Vue components and custom CSS in `src/App.css`.
+
+## License
+
+[MIT License](LICENSE)

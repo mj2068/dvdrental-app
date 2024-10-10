@@ -19,8 +19,7 @@ app.use(Antd);
 app.mount("#app");
 
 axios.defaults.baseURL = import.meta.env.DEV
-  // ? "http://localhost:8000"
-  ? "https://zizaimai.space/api/dvdrental"
+  ? "http://localhost:8000"
   : "https://zizaimai.space/api/dvdrental";
 console.log("in dev mode, baseURL: ", axios.defaults.baseURL);
 axios.defaults.paramsSerializer = { indexes: null };

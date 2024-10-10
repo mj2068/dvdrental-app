@@ -1,5 +1,9 @@
 <script>
+import IconCrystalBall from "~icons/mdi/crystal-ball";
 export default {
+  components: {
+    IconCrystalBall,
+  },
   props: {
     showNavBar: { default: true },
   },
@@ -14,18 +18,19 @@ export default {
   <header>
     <a-flex
       style="
-        height: 64px;
+        height: 4.8rem;
         background-color: #edf9fb;
         margin-bottom: 0.5rem;
         padding-inline-start: 1rem;
       "
       align="center"
     >
-      <h1 style="margin-block: 0">
-        <router-link :to="{ name: 'home' }" style="color: darkblue">
-          Rental Manager (Demo)
-        </router-link>
-      </h1>
+      <router-link :to="{ name: 'home' }">
+        <a-flex align="end" gap="8" style="font-size: 2rem; font-weight: 600; color: darkblue">
+          <IconCrystalBall />
+            Rental Manager (Demo)
+          </a-flex>
+      </router-link>
     </a-flex>
     <NavBar v-if="showNavBar" />
   </header>

@@ -173,7 +173,7 @@ onMounted(() => {
 
     <a-flex vertical class="flex-grow">
       <a-flex
-        style="font-size: 1.5rem; font-weight: 600; margin-bottom: 0.5rem"
+        style="font-size: 1.5rem; font-weight: 600; margin-block: 1rem"
         gap="small"
       >
         <IconMonitorDashboard />
@@ -353,27 +353,27 @@ onMounted(() => {
 .card {
   border-radius: 4px;
   padding: 16px;
-  height: 240px;
+  height: 260px;
 }
 
 /* Diverse warm color classes with 0.2 transparency */
 .card-color-1 {
-  background-color: rgba(255, 87, 34, 0.05);
+  background-color: rgba(34, 174, 255, 0.1);
 } /* Deep Orange */
 .card-color-2 {
-  background-color: rgba(255, 193, 7, 0.05);
+  background-color: rgba(255, 193, 7, 0.1);
 } /* Amber */
 .card-color-3 {
-  background-color: rgba(233, 30, 99, 0.05);
+  background-color: rgba(233, 30, 99, 0.1);
 } /* Pink */
 .card-color-4 {
-  background-color: rgba(156, 39, 176, 0.05);
+  background-color: rgba(52, 228, 17, 0.1);
 } /* Purple */
 .card-color-5 {
-  background-color: rgba(0, 150, 136, 0.05);
+  background-color: rgba(150, 140, 0, 0.1);
 } /* Teal */
 .card-color-6 {
-  background-color: rgba(76, 175, 80, 0.05);
+  background-color: rgba(76, 175, 80, 0.1);
 } /* Green */
 
 .chart-title {
