@@ -1,11 +1,11 @@
 #app {
-  /* margin-inline: 0.5rem; */
   min-height: 100vh;
   max-width: 90rem;
   margin-inline: auto;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  align-items: center;
 }
 
 h2 {

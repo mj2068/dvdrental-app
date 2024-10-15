@@ -352,8 +352,8 @@ onMounted(() => {
 
 .card {
   border-radius: 4px;
-  padding: 16px;
-  height: 260px;
+  padding: 1rem;
+  height: 280px;
 }
 
 /* Diverse warm color classes with 0.2 transparency */

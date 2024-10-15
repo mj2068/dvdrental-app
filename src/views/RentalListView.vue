@@ -420,7 +420,6 @@ function clearOptions() {
       showTotal: (total: number, range: number[]) =>
         `${range[0]}-${range[1]} (Total: ${total})`,
       responsive: true,
-      position: ['bottomCenter'],
     }"
     v-on:change="onTableChange"
   >
