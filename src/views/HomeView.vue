@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import useGlobalStore from "@/stores/global";
 import { useRequest } from "vue-request";
 import axios from "axios";
 import IconMonitorDashboard from "~icons/mdi/monitor-dashboard";
@@ -43,7 +42,7 @@ interface RecentRentalsResponseItem {
   film_title: string;
 }
 
-const globalStore = useGlobalStore();
+// const globalStore = useGlobalStore();
 
 async function getOverview() {
   const result = await axios.get<OverviewResponse>("/stats/overview");
@@ -51,7 +50,7 @@ async function getOverview() {
 }
 const {
   data: overviewData,
-  loading: overviewLoading,
+  // loading: overviewLoading,
   run: runOverview,
 } = useRequest<OverviewResponse>(getOverview, { manual: true });
 const overviewItems = computed<ListItem[]>(() => {
@@ -93,7 +92,7 @@ async function getTopFilms() {
 }
 const {
   data: topFilmsData,
-  loading: topFilmsLoading,
+  // loading: topFilmsLoading,
   run: runTopFilms,
 } = useRequest(getTopFilms, { manual: true });
 const topFilmsItems = computed<ListItem[]>(() => {
@@ -114,7 +113,7 @@ async function getDailyRentals() {
 }
 const {
   data: dailyRentalsData,
-  loading: dailyRentalsLoading,
+  // loading: dailyRentalsLoading,
   run: runDailyRentals,
 } = useRequest(getDailyRentals, { manual: true });
 
@@ -127,7 +126,7 @@ async function getDailyPayments() {
 }
 const {
   data: dailyPaymentsData,
-  loading: dailyPaymentsLoading,
+  // loading: dailyPaymentsLoading,
   run: runDailyPayments,
 } = useRequest(getDailyPayments, { manual: true });
 
@@ -140,7 +139,7 @@ async function getRecentRentals() {
 }
 const {
   data: recentRentalsData,
-  loading: recentRentalsLoading,
+  // loading: recentRentalsLoading,
   run: runRecentRentals,
 } = useRequest(getRecentRentals, { manual: true });
 

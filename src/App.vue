@@ -27,7 +27,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div>
+  <div style="width: 100%">
     <AppHeader :show-nav-bar="'home' !== route.name" />
     <main style="margin-inline: 0.5rem">
       <RouterView />
