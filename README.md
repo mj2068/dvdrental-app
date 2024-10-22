@@ -1,5 +1,5 @@
 
-这是我使用Vue.js配合Ant Design Vue UI组件库开发的一个对rentaldvd这个postgresql样板数据库进行查看示例的项目。
+使用Vue.js配合Ant Design Vue UI组件库开发的一个对postgresql rentaldvd数据库进行查看的项目。
 
 实现的路由页面包含：
 - 首页
@@ -11,10 +11,10 @@
 - 租赁详情
 - 客户详情
 
-![首页截图](images/home_demo.jpg "首页截图")
+![首页截图](images/home_screenshot.jpg "首页截图")
 ![影片列表截图](images/film_list_screenshot.jpg "影片列表截图")
 
-以下内容增减修改于Cursor AI claude-3.5-sonnet生成内容。
+以下内容由Cursor AI claude-3.5-sonnet生成，稍作增减、修改。
 
 The following is adpted upon generated content by Cursor AI claude-3.5-sonnet
 # DVD Rental Manager
